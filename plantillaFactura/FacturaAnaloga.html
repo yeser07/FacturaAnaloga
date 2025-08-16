@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Factura</title>
+  <style>
+    @page {
+      size: Letter;
+      margin: 0;
+      margin-left: 5mm;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 11px;
+      margin: 0;
+      padding: 0;
+      background: #fff;
+    }
+
+    .page {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 216mm;
+      min-height: 279mm;
+      margin: auto;
+      border: 1px solid #000;
+      padding: 5mm;
+      box-sizing: border-box;
+    }
+
+    /* Contenedor de la parte superior que crece */
+    .content-wrapper {
+      flex: 1;
+    }
+
+    /* --- Encabezado --- */
+    .header {
+      display: grid;
+      grid-template-columns: 50mm 1fr 40mm;
+      align-items: center;
+      border-bottom: 1px solid #000;
+      height: 35mm;
+    }
+
+    .header .logo {
+      text-align: center;
+    }
+
+    .header .logo img {
+      max-width: 40mm;
+      max-height: 20mm;
+    }
+
+    .header .center {
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .header .right {
+      text-align: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    /* --- Datos Empresa y Factura --- */
+    .company-info {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #000;
+      padding: 1mm 0;
+    }
+
+    .company-info div {
+      font-size: 10px;
+    }
+
+    /* --- Bodega / Instrucciones / Fecha --- */
+    .info-row {
+      display: grid;
+      grid-template-columns: 50mm 100mm 1fr;
+      border-bottom: 1px solid #000;
+    }
+
+    .info-cell {
+      border-left: 1px solid #000;
+      padding: 2mm;
+      font-size: 9px;
+      text-align: center;
+    }
+
+    .info-cell:first-child {
+      border-left: none;
+    }
+
+    /* --- Tabla de artículos --- */
+    table.items {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: -1px;
+    }
+
+    table.items th,
+    table.items td {
+      border: 1px solid #000;
+      padding: 1.5mm;
+      font-size: 9px;
+      text-align: center;
+    }
+
+    table.items th {
+      background: #f0f0f0;
+      font-weight: bold;
+    }
+
+    table.items td.desc {
+      text-align: left;
+    }
+
+    /* --- Totales y abonos --- */
+    .bottom {
+      display: grid;
+      grid-template-columns: 1fr 40mm;
+      gap: 2mm;
+      margin-top: 2mm;
+    }
+
+    .abonos,
+    .totales {
+      border: 1px solid #000;
+      padding: 2mm;
+      font-size: 9px;
+    }
+
+    .totales table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .totales td {
+      padding: 1mm;
+    }
+
+    .totales .label {
+      text-align: left;
+    }
+
+    .totales .value {
+      text-align: right;
+      font-weight: bold;
+    }
+
+    /* --- Pie con logos y código de barras --- */
+    .footer {
+      border-bottom: 1px solid #000;
+      font-size: 10px;
+      text-align: center;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 80mm 1fr;
+      align-items: center;
+      justify-items: center;
+    }
+
+    .footer-grid>div:nth-child(2) {
+      border-left: 1px solid #000;
+      padding-left: 4mm;
+      margin-top: 0px;
+    }
+
+    .barcode img {
+      max-width: 35mm;
+    }
+
+    .square {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border: #000 1px solid;
+    }
+
+    .fila-e {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .info-row-2 {
+      display: grid;
+      grid-template-columns: 50mm 50mm 50mm 1fr;
+      border-bottom: 1px solid #000;
+    }
+
+    .info-row-3 {
+      display: grid;
+      grid-template-columns: 25mm 25mm 75mm 25mm 25mm 25mm;
+      border-bottom: 1px solid #000;
+    }
+
+    .info-row-constancias {
+      margin-top: 2mm;
+      display: grid;
+    }
+
+    .section-botton-invoice {
+      bottom: 0px;
+      border-top: 1px solid #000;
+
+    }
+
+    .sub-totales-box {
+      display: grid;
+      grid-template-columns: 65mm 30mm 50mm 1fr;
+      border-top: 1px solid #000;
+      border-bottom: 1px solid #000;
+      margin-top: 2mm;
+    }
+
+    .monto-letras-total {
+      display: grid;
+      grid-template-columns: 145mm 1fr;
+      border-bottom: 1px solid #000;
+    }
+
+    .info-cell-2 {
+      border-bottom: 1px solid #000;
+      font-size: 8px;
+    }
+
+    .info-cell-2 .fila-e {
+      display: flex;
+      justify-content: center;
+
+    }
+
+    .column-e {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-right: 1px solid #000;
+    }
+
+    .container-cells {
+      display: flex;
+    }
+
+    .info-cell-3 {
+      border-bottom: 1px solid #000;
+      font-size: 8px;
+      flex: 1;
+      box-sizing: border-box;
+      border-left: 1px solid #000;
+      border-right: 1px solid #000;
+    }
+
+    .info-cell-3 .fila-e {
+      display: flex;
+      justify-content: center;
+    }
+
+    .recepcion-info-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid #000;
+    }
+
+    .logos-rango {
+      display: grid;
+      grid-template-columns: 1fr 70mm;
+    }
+
+    .rectangulo {
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(to right, black 0%, rgb(20, 20, 155) 50%, black 100%);
+      margin-bottom: 5px;
+      print-color-adjust: exact;
+    }
+
+    .barras-direccion {
+      display: grid;
+      grid-template-columns: 700mm 1fr;
+      border-bottom: 1px solid #000;
+    }
+    .data-cliente {
+      border: 1px solid #000;
+      padding: 2mm;
+      box-sizing: content-box;
+      margin-left: 5mm;
+      margin-right: 15mm;
+    }
+    .data-factura {
+      border: 1px solid #000;
+      padding: 2mm;
+      box-sizing: content-box;
+      margin-right: 5mm;
+    }
+    .data-factura-info {
+      text-align: left !important;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <div class="content-wrapper">
+      <!-- ENCABEZADO -->
+      <div class="header">
+        <div class="logo">
+          <img src="{{logo_url}}" alt="LOGO">
+          <br>
+          <h3>EMPRESA S.A DE C.V </h3>
+          <span style="font-size: 8px;">CAI: 11111-11111-11111-11111-11</span>
+          <div class="fila-e">
+            <span>CONTADO<span class="square"></span></span>
+            <span>VENDIDO A:</span>
+          </div>
+          <div class="fila-e">
+            <span>CREDITO <span class="square"></span></span>
+            <span>SOLD TO:</span>
+          </div>
+
+        </div>
+        <div class="center data-cliente">COD CLIENTE / CUSTOMER
+          <div class="data-cliente-info" style="text-align: left ! important; margin-left: 10mm;">
+            <br>
+            <span style="font-size: 8px;">NOMBRE: NOMBRE DE LA EMPRESA</span>
+            <br>
+            <span style="font-size: 8px;">DIRECCION: DIRECCION DE LA EMPRESA</span>
+            <br>
+            <span style="font-size: 8px;">RTN: 123456789</span>
+            <br>
+            <span style="font-size: 8px;">CORREO ELECTRONICO: 5Yp4G@example.com</span>
+            </div>
+        </div>
+        <div class="right data-factura">FACTURA
+            <div class=" data-factura-info">
+              <br>
+              <span style="font-size: 10px ; font-weight: bold;">000-000-00-00000000</span>
+              <br>
+              <span style="font-size: 8px;">RTN: 123456789</span>
+              <br>
+              <span style="font-size: 8px;">FACTURA SAP: 0000000000</span>
+          </div>
+        </div>
+      </div>
+      <!-- BODEGA / INSTRUCCIONES / FECHA -->
+      <div class="info-row">
+        <div class="info-cell">
+          <div class="fila-e">
+            <span>BODEGA/WAREHOUSE</span>
+          </div>
+          <div class="fila-e">
+            <span>D030 CDR HONDURAS</span>
+          </div>
+        </div>
+        <div class="info-cell" style="align-items: center; display: flex; justify-content: center;">
+          <div class="fila-e">
+            <span>INSTRUCCIONES/INSTRUCTIONS</span>
+          </div>
+        </div>
+        <div class="info-cell">
+          <div class="fila-e"
+            style="align-items: center; display: flex; justify-content: center; font-size: 8px !important;">
+            <span>FECHA DE EMISION/INVOICE DATE</span>
+          </div>
+          <div class="fila-e">
+            <span>11/11/2022</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-row-2">
+        <div class="info-cell" style="font-size: 8px !important;">
+          <div class="fila-e">
+            <span>OC/PO CLIENTE</span>
+          </div>
+          <div class="fila-e">
+            <span>{{oc}}</span>
+          </div>
+        </div>
+        <div class="info-cell">
+          <span>TIPO DE CAMBIO / EXCHANGE RATE</span>
+        </div>
+        <div class="info-cell">
+          <span>MOTIVO DE PEDIDO</span>
+        </div>
+        <div class="info-cell" style="font-size: 8px !important;">
+          <div class="fila-e">
+            <span>ORDEN DE VENTA /SALES ORDER</span>
+          </div>
+          <div class="fila-e">
+            <span>{{oc}}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TABLA DE ARTÍCULOS -->
+      <table class="items">
+        <thead">
+          <tr>
+            <th style="font-size: 6px !important;">
+              CANTIDAD<br>
+              QUANTITY
+            </th>
+            <th style="font-size: 6px !important;">
+              CODIGO ARTICULO<br>
+              ITEM CODE
+            </th>
+            <th>
+              DESCRIPCION ARTICULO<br>
+              ITEM DESCRIPTION
+            </th>
+            <th style="font-size: 6px !important;">
+              PRECIO UNITARIO<br>
+              UNIT PRICE
+            </th>
+            <th style="font-size: 6px !important;">
+              DESCUENTOS Y REBAJAS OTORGADOS<br>
+              DISCOUNT
+            </th>
+            <th style="font-size: 6px !important;">
+              IMPORTE NETO<br>
+              NET BALANCE
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>{{codigo}}</td>
+              <td class="desc">{{descripcion}}</td>
+              <td>{{unidad}}</td>
+              <td>{{precio_unitario}}</td>
+              <td>{{descuento}}</td>
+            </tr>
+          </tbody>
+      </table>
+    </div>
+
+
+    <div class="section-botton-invoice">
+      <!-- CONSTANCIAS-->
+      <div class="info-row-constancias">
+        <span>Numero de correlativo de la Orden de Compra Exenta:</span>
+        <span>Numero de correlativo de la Constancia del Registro de Exonerados:</span>
+        <span>Numero indicativo del Registro de la secretaria de Estado en el Despacho de Agricultura y
+          Ganaderia:</span>
+      </div>
+
+      <!-- DETALLE DE ABONO Y TOTALES -->
+      <div class="sub-totales-box">
+        <div class="info-cell">
+          Detalle del Abono
+          <table style="text-align: center !important;">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>VENCE</th>
+                <th>IMPORTE</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>11/11/2022</td>
+                <td>EFECTIVO</td>
+                <td>{{monto_abono}}</td>
+              </tr>
+          </table>
+        </div>
+        <div class="info-cell">
+          <span
+            style="font-size: 8px !important; display: flex ; justify-content: center; align-items: center; text-align: center; padding: 20px;">Todos
+            los montos indicados en esta factura estan expresados en: L. Lempira Hondureno</span>
+        </div>
+        <div class="info-cell">
+          <div class="info-cell-2">
+            <div class="fila-e">
+              <span>CANTIDAD DE PIEZAS<span>
+            </div>
+            <div class="fila-e">
+              <span>{{cantidad_piezas}}</span>
+            </div>
+          </div>
+          <div class="container-cells">
+            <div class="info-cell-3">
+              <div class="fila-e">
+                <span>PESO NETO<span>
+              </div>
+              <div class="fila-e">
+                <span>{{peso_neto}}</span>
+              </div>
+            </div>
+            <div class="info-cell-3">
+              <div class="fila-e">
+                <span>PESO BRUTO<span>
+              </div>
+              <div class="fila-e">
+                <span>{{peso_bruto}}</span>
+              </div>
+            </div>
+          </div>
+          <br>
+          <br>
+          <span>TERMINO PAGO / PAYMENT TERM<br>"Z090 <br>90 DIAS S/I"</span>
+        </div>
+        <div class="info-cell">
+          <table>
+            <tr style="text-align: right;">
+              <td>IMPORTE EXONERADO</td>
+            </tr>
+            <tr style="text-align: right;">
+              <td>IMPORTE EXENTO</td>
+            </tr>
+            <tr style="text-align: right;">
+              <td>IMPORTE GRAVADO 15%</td>
+            </tr>
+            <tr style="text-align: right;">
+              <td>IMPORTE GRAVADO 18%</td>
+            </tr>
+            <tr style="text-align: right;">
+              <td>0% ISV</td>
+            </tr>
+            <tr style="text-align: right;">
+              <td>15% ISV</td>
+            </tr>
+            <tr style="text-align: right;">
+              <td>18% ISV</td>
+            </tr>
+            <tr style="text-align: right;">
+              <td>TRANSPORTE</td>
+            </tr>
+          </table>
+        </div>
+
+      </div>
+      <div class="monto-letras-total">
+        <div class="info-cell" style="font-size: 6px !important; text-align: justify;">
+          <div class="fila-e">
+            <span>IMPORTE EN LETRAS/ TOTAL AMOUNT IN WORDS<span>
+          </div>
+          <div class="fila-e">
+            <span>{{monto_letras}}</span>
+          </div>
+        </div>
+        <div class="info-cell" style="text-align: center; font-size: 12px !important;">
+          TOTAL L. {{total}}
+        </div>
+      </div>
+      <div class="recepcion-info-box">
+        <div class="info-cell" style="
+          margin-top: 8mm;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-start;
+          font-size: 8px !important;
+          text-align: center;
+        ">
+          <div style="width: 100%; border-top: 1px solid #000; margin-bottom: 2px;"></div>
+          <span>
+            APELLIDOS NOMBRES, TARJETA DE IDENTIDAD O DOC. DE IDENTIDAD, Y FIRMA DE LA PERSONA QUE RECIBE LA FACTURA
+          </span>
+        </div>
+        <div class="info-cell">
+          <span style="font-size: 6px !important; text-align: left !important;">La Constancia de los pagos. A solicitud
+            del comprador, se extenderán en documentos separados de esta factura. Si
+            el comprador incurriere en atrasos en el pago de sus abonos. Acepta un cargo de Intereses del 3.75 mensual.
+            La falta
+            de uno solo de los abonos en las fechas convenidas, dará por vencidas los demás plazos a favor del comprador
+            y hará
+            exigible el saldo de la obligación. El aceptante comprador por el carácter de Factura Cambiaria, acepta las
+            condiciones
+            de esta factura. La firma del comprados al aceptar la factura, obligara a este a cumplir con todas las
+            condiciones
+            en la misma por Mabe Honduras, S.A. En caso de acción judicial el comprador Renuncia el Fuero de su
+            Domicilio y
+            se somete expresamente a los tribunales que elija Mabe Honduras, S.A. aceptada libre de protesto</span>
+        </div>
+      </div>
+
+      <div class="logos-rango">
+        <div class="info-cell">
+          <span>LOGOS</span>
+        </div>
+        <div class="info-cell">
+          <div class="fila-e">
+            <span>RANGO AUTORIZADO: 000-001-01-00052002 A LA 000-001-01-00055001</span>
+          </div>
+          <div class="fila-e">
+            <span>FECHA LIMITE DE EMISION: 10 DE OCTUBRE DEL 2025</span>
+          </div>
+        </div>
+      </div>
+      <div class="rectangulo"></div>
+
+      <!-- PIE -->
+      <div class="footer">
+        <div class="footer-grid">
+          <div class="barcode">
+            CODIGO DE BARRAS<br>
+          </div>
+          <div>
+            <span>MABE HONDURAS,S.A DE C.V <br>PARQUE INDUSTRIAL EL BARON,2 CALLE 19 AVENIDA, LOCALES 9 Y 10 <br>SAN
+              PEDRO SULA, CORTES, HN<br>TEL: 25709510</span>
+          </div>
+        </div>
+      </div>
+      <span style="font-size: 8px;">Original: Cliente <br> Copia:Obligado tributario emisor</span>
+    </div>
+  </div>
+</body>
+</html>

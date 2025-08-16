@@ -1,0 +1,33 @@
+{
+  "name": "facturaanaloga",
+  "version": "1.0.0",
+  "main": "electron/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "cross-env NODE_ENV=development concurrently \"vite\" \"electron .\"",
+    "build": "vite build && electron-builder",
+    "start": "electron .",
+    "electron": "electron electron/main.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.1",
+    "concurrently": "^9.2.0",
+    "cross-env": "^10.0.0",
+    "electron": "^37.2.6",
+    "vite": "^7.1.2"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.0",
+    "bootstrap-icons": "^1.13.1",
+    "bootstrap-vue-next": "^0.8.0",
+    "sequelize": "^6.37.7",
+    "sqlite3": "^5.1.7",
+    "sweetalert2": "^11.22.4",
+    "vue": "^3.4.0",
+    "vue-router": "^4.5.1"
+  }
+}

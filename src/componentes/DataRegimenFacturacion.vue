@@ -18,7 +18,6 @@ const editId = ref(null)
 // Cargar registros desde SQLite
 async function cargar() {
   const resultados = await window.api.getAllDataRegimen()
-  console.log(resultados)
   registros.value = resultados.map(r => {
     const item = r.dataValues
     return {

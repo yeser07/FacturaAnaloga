@@ -4,6 +4,8 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 
 import Home from '../componentes/Home.vue'
 import DataRegimenFacturacion from '../componentes/DataRegimenFacturacion.vue'
+import Empresa from '../componentes/Empresa.vue'
+import Factura from '../componentes/Factura.vue'
 
 const routes = [
     {
@@ -15,6 +17,16 @@ const routes = [
       path: '/data-regimen-facturacion',
       name: 'DataRegimenFacturacion',
       component: DataRegimenFacturacion
+    },
+    {
+      path: '/empresa',
+      name: 'Empresa',
+      component: Empresa
+    },
+    {
+      path: '/crear-factura',
+      name: 'CrearFactura',
+      component: Factura
     }
 ]
 

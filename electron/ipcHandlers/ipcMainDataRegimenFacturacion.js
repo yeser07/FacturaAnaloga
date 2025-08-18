@@ -85,4 +85,13 @@ ipcMain.handle('dataRegimen:delete', async (event, id) => {
 })
 
 
+ipcMain.handle('dataRegimen:getCaiActivo', async () => {
+  return DataRegimenFacturacion.findOne({
+    where: {
+      estado: 'activo'
+    }
+  })
+})
+
+
     

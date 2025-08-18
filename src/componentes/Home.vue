@@ -11,6 +11,16 @@
         Data Regimen
       </b-button>
 
+        <b-button
+          variant="danger"
+          class="rounded-circle menu-btn d-flex flex-column justify-content-center align-items-center"
+          @click="goTo('empresa')"
+        >
+          <i class="bi bi-building mb-2" style="font-size: 24px;"></i>
+          Empresa
+      </b-button>
+
+
       <b-button
         variant="success"
         class="rounded-circle menu-btn d-flex flex-column justify-content-center align-items-center"
@@ -59,6 +69,9 @@ const goTo = (option) => {
       break
     case 'productos':
       router.push('/productos')
+      break
+    case 'empresa':
+      router.push('/empresa')
       break
   }
 }

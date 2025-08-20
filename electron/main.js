@@ -8,6 +8,7 @@ const { DataRegimenFacturacion } = require('./models/dataRegimenFacturacion')
 
 require('./ipcHandlers/ipcMainDataRegimenFacturacion');
 require('./ipcHandlers/ipcHandlerEmpresa');
+require('./ipcHandlers/ipcHandlerCliente');
 
 
 //BD SQLITE
@@ -34,7 +35,7 @@ function createWindow() {
 }
 
 app.whenReady().then(async () => {
-  await sequelize.sync({}) // Sincronizar la base de datos
+  await sequelize.sync({alter: true}) // Sincronizar la base de datos
   createWindow()
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()

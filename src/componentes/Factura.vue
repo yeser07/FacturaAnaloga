@@ -101,6 +101,50 @@
           </div>
       <b-table :items="items" :fields="fields" bordered hover small head-variant="light" class="mb-0" />
     </b-card>
+    <b-card   class="p-2 ms-auto" style="width: fit-content; min-width: 250px;">
+      <b-row>
+        <b-col>
+         <table class="table table-sm table-bordered mb-0" style="width: auto;">
+            <tr>
+              <td><b>IMPORTE EXONERADO: </b></td>
+              <td>L. {{ exoneradoTotal }}</td>
+            </tr>
+            <tr>
+              <td><b>IMPORTE EXENTO: </b></td>
+              <td>L. {{ exentoTotal }}</td>
+            </tr>
+            <tr>
+              <td><b>IMPORTE GRAVADO 15%: </b></td>
+              <td>L. {{ gravado15Total }}</td>
+            </tr>
+            <tr>
+              <td><b>IMPORTE GRAVADO 18%: </b></td>
+              <td>L. {{ gravado18Total }}</td>
+            </tr>
+            <tr>
+              <td><b>0% ISV: </b></td>
+              <td>L. 0.00</td>
+            </tr>
+            <tr>
+              <td><b>15% ISV: </b></td>
+              <td>L. {{ isv15Total }}</td>
+            </tr>
+            <tr>
+              <td><b>18% ISV: </b> </td>
+              <td>L. {{ isv18Total }}</td>
+            </tr>
+            <tr>
+              <td><b>TRANSPORTE: </b> </td>
+              <td>L. {{ transporteTotal }}</td>
+            </tr>
+            <tr>
+              <td><b><h2>TOTAL: </h2> </b></td>
+              <td><b><h2>L. {{ totalFactura }}</h2> </b></td>
+            </tr>
+          </table>
+        </b-col>
+    </b-row>
+    </b-card>
   </div>
   <b-modal v-model="showModalCliente" title="Agregar Cliente" hide-footer> <b-form @submit.prevent="guardarCliente">
       <b-form-group label="Razón Social:" label-for="razonSocial">
@@ -152,9 +196,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import Swal from 'sweetalert2'
-import { parse } from '@vue/compiler-dom'
 
 
 const clienteId = ref(null)
@@ -175,7 +218,8 @@ const detalleFacturaModel = ref({
   precioUnitario: 0,
   cantidad: 0,
   descuento: 0,
-  importe: 0
+  importe: 0,
+  esquemaImpuesto: 'isv15'
 })
 
 
@@ -186,7 +230,7 @@ const showModalCliente = ref(false)
 const showModalProducto = ref(false)
 
 
-const fields = ['Cantidad', 'Codigo del Articulo', 'Descripcion', 'Precio Unitario', 'Descuento', 'Importe Neto']
+const fields = ['Cantidad', 'Codigo del Articulo', 'Descripcion', 'Precio Unitario', 'Descuento','ISV', 'Importe Neto']
 
 const items = ref([])
 
@@ -209,6 +253,36 @@ async function getClientes() {
   }
 }
 
+const importeExonerado = ref([]) 
+const importeExento = ref([])
+const importeGravado15 = ref([])
+const importeGravado18 = ref([])
+
+const exoneradoTotal = computed(() => sumaArrayImpuestos(importeExonerado.value).toFixed(2))
+const exentoTotal    = computed(() => sumaArrayImpuestos(importeExento.value).toFixed(2))
+const gravado15Total = computed(() => sumaArrayImpuestos(importeGravado15.value).toFixed(2))
+const gravado18Total = computed(() => sumaArrayImpuestos(importeGravado18.value).toFixed(2))
+
+const isv15Total = computed(() => (gravado15Total.value * 0.15).toFixed(2))
+const isv18Total = computed(() => (gravado18Total.value * 0.18).toFixed(2))
+const isvExoneradoTotal = computed(() => (exoneradoTotal.value * 0).toFixed(2))
+const isvExentoTotal = computed(() => (exentoTotal.value * 0).toFixed(2))
+const transporteTotal = computed(() => (0).toFixed(2))
+
+const totalFactura = computed(() => {
+  return (
+    parseFloat(exoneradoTotal.value) +
+    parseFloat(exentoTotal.value) +
+    parseFloat(gravado15Total.value) +
+    parseFloat(gravado18Total.value) +
+    parseFloat(isv15Total.value) +
+    parseFloat(isv18Total.value) +
+    parseFloat(isvExoneradoTotal.value) +
+    parseFloat(isvExentoTotal.value) +
+    parseFloat(transporteTotal.value)
+  ).toFixed(2)
+})
+
 async function guardarProducto() {
   const cantidad = parseFloat(detalleFacturaModel.value.cantidad) || 0
   const codigo = detalleFacturaModel.value.codigo || ''
@@ -219,6 +293,11 @@ async function guardarProducto() {
   const descuentoTotal = parseFloat((cantidad * descuento).toFixed(2))
   const importeBruto = parseFloat((cantidad * precioUnitario).toFixed(2))
   const importeNeto = parseFloat((importeBruto - descuentoTotal).toFixed(2))
+  const isv = importeNeto * esquemaImpuestoSeleccionado(detalleFacturaModel.value.esquemaImpuesto)
+
+  //CALCULA EL TOTAL DE LOS IMPORTES POR CADA ESQUEMA DE IMPUESTO
+  calcularImportesTotales(importeNeto, detalleFacturaModel.value.esquemaImpuesto)
+
 
   items.value.push({
     Cantidad: cantidad,
@@ -228,9 +307,39 @@ async function guardarProducto() {
     Descuento: descuento,
     'Descuento Total': descuentoTotal,
     'Importe Bruto': importeBruto,
-    'Importe Neto': importeNeto
+    'Importe Neto': importeNeto,
+    'ISV': (isv).toFixed(2),
   })
 }
+
+function esquemaImpuestoSeleccionado(isv) {
+  if (isv === 'isv15') {
+    return 0.15
+  } else if (isv === 'isv18') {
+    return 0.18
+  } else {
+    return 0
+  }
+}
+
+function calcularImportesTotales(importeNeto,esquemaImpSelected){
+  if (esquemaImpSelected === 'exonerado') {
+    importeExonerado.value.push(importeNeto)
+  } else if (esquemaImpSelected === 'exento') {
+    importeExento.value.push(importeNeto)
+  } else if (esquemaImpSelected === 'isv15') {
+    importeGravado15.value.push((importeNeto))
+  } else if (esquemaImpSelected === 'isv18') {
+    importeGravado18.value.push(importeNeto)
+  }
+}
+
+function sumaArrayImpuestos(arr) {
+  return arr.reduce((acc, val) => acc + parseFloat(val || 0), 0)
+}
+
+
+
 
 function abrirModalCliente() {
   limpiarModalCliente()
@@ -251,7 +360,8 @@ function limpiarModalProducto() {
     precioUnitario: '',
     cantidad: 0,
     descuento: 0,
-    importe: 0
+    importe: 0,
+    esquemaImpuesto: ''
   }
 }
 
@@ -289,6 +399,7 @@ async function guardarCliente() {
     Swal.fire('Éxito', response.message, 'success')
     showModalCliente.value = false
     limpiarModalCliente()
+    await getClientes()
   } else {
     Swal.fire('Error', response.message, 'error')
   }

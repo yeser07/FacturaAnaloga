@@ -9,6 +9,7 @@ const { DataRegimenFacturacion } = require('./models/dataRegimenFacturacion')
 require('./ipcHandlers/ipcMainDataRegimenFacturacion');
 require('./ipcHandlers/ipcHandlerEmpresa');
 require('./ipcHandlers/ipcHandlerCliente');
+require('./ipcHandlers/ipcHandlerProducto');
 
 
 //BD SQLITE

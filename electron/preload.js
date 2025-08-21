@@ -23,6 +23,13 @@ contextBridge.exposeInMainWorld('api', {
   createCliente: (data) => ipcRenderer.invoke('cliente:create', data),
   getAllCliente: () => ipcRenderer.invoke('cliente:getAll'),
   //updateCliente: (id, data) => ipcRenderer.invoke('cliente:update', id, data),
-//  deleteCliente: (id) => ipcRenderer.invoke('cliente:delete', id)
+//  deleteCliente: (id) => ipcRenderer.invoke('cliente:delete', id),
+
+
+  // CRUD Producto
+  createProducto: (data) => ipcRenderer.invoke('producto:create', data),
+  getAllProducto: () => ipcRenderer.invoke('producto:getAll'),
+  getProductoByCodigo: (codigo) => ipcRenderer.invoke('producto:getProductoByCodigo', codigo),
+
 
 })

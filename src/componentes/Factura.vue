@@ -48,8 +48,7 @@
               </b-card-text>
             </b-card>
         </b-card>
-          </b-col>
-
+      </b-col>
       <!-- Datos de Factura -->
       <b-col md="6">
         <b-card bg-variant="dark" text-variant="white" class="mb-3 shadow-sm rounded-3">
@@ -99,7 +98,11 @@
               <i class="bi bi-cart-plus"></i> Agregar Producto
             </b-button>
           </div>
-      <b-table :items="items" :fields="fields" bordered hover small head-variant="light" class="mb-0" />
+      <b-table :items="items" :fields="fields" bordered hover small head-variant="light" class="mb-0">
+        <!-- <template #cell(Acciones)="data">
+          <b-button size="sm" variant="danger" class="ms-2" @click="eliminarProducto(data.index)"><span class="bi bi-trash"></span></b-button>
+        </template> -->
+      </b-table>
     </b-card>
     <b-card   class="p-2 ms-auto" style="width: fit-content; min-width: 250px;">
       <b-row>
@@ -143,14 +146,15 @@
             </tr>
           </table>
         </b-col>
-    </b-row>
+      </b-row>
     </b-card>
   </div>
-  <b-modal v-model="showModalCliente" title="Agregar Cliente" hide-footer> <b-form @submit.prevent="guardarCliente">
+  <b-modal v-model="showModalCliente" title="Agregar Cliente" hide-footer>
+    <b-form @submit.prevent="guardarCliente">
       <b-form-group label="Razón Social:" label-for="razonSocial">
         <b-form-input id="razonSocial" v-model="clienteModel.razonSocial"></b-form-input>
       </b-form-group>
-      <b-form-group label="RTN::" label-for="rtn">
+      <b-form-group label="RTN:" label-for="rtn">
         <b-form-input id="rtn" v-model="clienteModel.rtn"></b-form-input>
       </b-form-group>
       <b-form-group label="Codigo Cliente:" label-for="codigoCliente">
@@ -164,31 +168,53 @@
     </b-form>
   </b-modal>
 
-  <b-modal v-model="showModalProducto" title="Agregar Producto al detalle" hide-footer>
+ <b-modal v-model="showModalProducto" title="Agregar Producto al detalle" hide-footer>
     <b-form @submit.prevent="guardarProducto">
       <b-form-group label="Cantidad:" label-for="cantidad">
-        <b-form-input id="cantidad" v-model="detalleFacturaModel.cantidad"></b-form-input>
+        <b-form-input id="cantidad" v-model="detalleFacturaModel.cantidad" type="number" min="1" step="1"></b-form-input>
       </b-form-group>
-      <b-form-group label="Codigo:" label-for="codigo">
-        <b-form-input id="codigo" v-model="detalleFacturaModel.codigo"></b-form-input>
+
+      <b-form-group label="Código:" label-for="codigo" class="position-relative">
+        <b-form-input
+          id="codigo"
+          v-model="detalleFacturaModel.codigo"
+          @input="buscarProducto(detalleFacturaModel.codigo)"
+          autocomplete="off"
+        ></b-form-input>
+
+        <!-- Lista de sugerencias -->
+        <ul v-if="sugerencias.length" class="list-group position-absolute w-100" style="z-index: 1000;">
+          <li
+            v-for="item in sugerencias"
+            :key="item.value"
+            class="list-group-item list-group-item-action"
+            @click="seleccionarProducto(item.value)"
+          >
+            {{ item.text }}
+          </li>
+        </ul>
       </b-form-group>
-      <b-form-group label="Descripcion:" label-for="descripcion">
+
+      <b-form-group label="Descripción:" label-for="descripcion">
         <b-form-input id="descripcion" v-model="detalleFacturaModel.descripcion"></b-form-input>
       </b-form-group>
+
       <b-form-group label="Precio Unitario:" label-for="precioUnitario">
-        <b-form-input id="precioUnitario" v-model="detalleFacturaModel.precioUnitario"></b-form-input>
+        <b-form-input id="precioUnitario" v-model="detalleFacturaModel.precioUnitario" type="number" step="0.01"></b-form-input>
       </b-form-group>
+
       <b-form-group label="Esquema de Impuesto:" label-for="esquemaImpuesto">
-        <b-form-select id="esquemaImpuesto" v-model="detalleFacturaModel.esquemaImpuesto">
-          <option value="isv15">ISV 15%</option>
-          <option value="isv18">ISV 18%</option>
-          <option value="exento">Exento</option>
-          <option value="exonerado">Exonerado</option>
-        </b-form-select>
+        <b-form-select
+          id="esquemaImpuesto"
+          v-model="detalleFacturaModel.esquemaImpuesto"
+          :options="esquemaImpuestosOpciones"
+        ></b-form-select>
       </b-form-group>
-        <b-form-group label="Descuento:" label-for="descuento">
-         <b-form-input id="descuento" v-model="detalleFacturaModel.descuento"></b-form-input>
+
+      <b-form-group label="Descuento:" label-for="descuento">
+        <b-form-input id="descuento" v-model="detalleFacturaModel.descuento" type="number" step="0.01"></b-form-input>
       </b-form-group>
+
       <br>
       <b-button type="submit" variant="primary">Guardar</b-button>
     </b-form>
@@ -216,14 +242,21 @@ const detalleFacturaModel = ref({
   codigo: '',
   descripcion: '',
   precioUnitario: 0,
-  cantidad: 0,
+  cantidad: 1,
   descuento: 0,
   importe: 0,
   esquemaImpuesto: 'isv15'
 })
 
+const esquemaImpuestosOpciones = [
+  { value: 'isv15', text: 'ISV 15%' },
+  { value: 'isv18', text: 'ISV 18%' },
+  { value: 'exento', text: 'Exento' },
+  { value: 'exonerado', text: 'Exonerado' }
+]
 
 
+const sugerencias = []
 
 
 const showModalCliente = ref(false)
@@ -284,6 +317,8 @@ const totalFactura = computed(() => {
 })
 
 async function guardarProducto() {
+  if (!validarInputsProducto()) return
+
   const cantidad = parseFloat(detalleFacturaModel.value.cantidad) || 0
   const codigo = detalleFacturaModel.value.codigo || ''
   const descripcion = detalleFacturaModel.value.descripcion || ''
@@ -309,7 +344,12 @@ async function guardarProducto() {
     'Importe Bruto': importeBruto,
     'Importe Neto': importeNeto,
     'ISV': (isv).toFixed(2),
+    'Acciones': ''
   })
+
+  guardarProductoBD( codigo, descripcion, precioUnitario)
+
+  limpiarModalProducto()
 }
 
 function esquemaImpuestoSeleccionado(isv) {
@@ -361,9 +401,10 @@ function limpiarModalProducto() {
     cantidad: 0,
     descuento: 0,
     importe: 0,
-    esquemaImpuesto: ''
+    esquemaImpuesto: 'isv15'
   }
 }
+
 
 
 function limpiarModalCliente() {
@@ -382,6 +423,21 @@ function validarInputsCliente() {
   }
   return true
 }
+
+function validarInputsProducto() {
+  if (!detalleFacturaModel.value.cantidad || !detalleFacturaModel.value.precioUnitario || !detalleFacturaModel.value.esquemaImpuesto || !detalleFacturaModel.value.codigo || !detalleFacturaModel.value.descripcion) {
+    Swal.fire('Error', 'Por favor completa todos los campos obligatorios', 'error')
+    return false
+  }
+  return true
+}
+
+/*function eliminarProducto(index) {
+  items.value.splice(index, 1)
+}*/
+
+
+
 
 async function guardarCliente() {
   if (!validarInputsCliente()) return
@@ -405,8 +461,62 @@ async function guardarCliente() {
   }
 }
 
+async function guardarProductoBD(codigo, descripcion, precioUnitario) {
 
+ let response = await window.api.createProducto({
+    codigo: codigo,
+    descripcion: descripcion,
+    precio: precioUnitario
+  })
 
+  if (response.success) {
+    console.log('Respuesta del backend Exito:', response.message)
+    limpiarModalProducto()
+  } else {
+    console.log('Respuesta del backend Error: ', response.message)
+  }
+}
+async function buscarProducto(codigo) {
+  if (codigo.length < 2) {
+    this.sugerencias = [];
+    return;
+  }
+
+  try {
+    const productos = await window.api.getProductoByCodigo(codigo);
+
+    if (productos && productos.length > 0) {
+
+      this.sugerencias = productos.map(p => ({
+        value: p.codigo,
+        text: `${p.codigo} - ${p.descripcion}`
+      }));
+    } else {
+      this.sugerencias = [];
+    }
+  } catch (err) {
+    console.error('Error buscando producto', err);
+  }
+}
+
+async function seleccionarProducto(codigoSeleccionado) {
+  try {
+    const productos = await window.api.getProductoByCodigo(codigoSeleccionado);
+
+    if (productos && productos.length > 0) {
+      const producto = productos.find(p => p.codigo === codigoSeleccionado);
+
+      if (producto) {
+        this.detalleFacturaModel.codigo = producto.codigo;
+        this.detalleFacturaModel.descripcion = producto.descripcion;
+        this.detalleFacturaModel.precioUnitario = producto.precio;
+        this.sugerencias = [];
+      }
+    }
+  } catch (err) {
+    console.error('Error cargando producto', err);
+  }
+}
 
 
 
@@ -418,5 +528,10 @@ onMounted(() => {
 <style scoped>
 h1, h3, h4 {
   font-weight: bold;
+}
+
+.list-group-item:hover {
+  cursor: pointer;
+  background-color: #f0f0f0;
 }
 </style>

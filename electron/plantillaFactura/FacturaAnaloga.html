@@ -301,47 +301,53 @@
     .data-factura-info {
       text-align: left !important;
     }
+    @media print {
+      .no-print {
+        display: none;
+      }
+    }
   </style>
 </head>
 
 <body>
   <div class="page">
+    <button class="no-print" onclick="window.print()">Imprimir</button>
     <div class="content-wrapper">
       <!-- ENCABEZADO -->
       <div class="header">
         <div class="logo">
-          <img src="{{logo_url}}" alt="LOGO">
+          <img src="{{empresa.logo}}" alt="LOGO">
           <br>
-          <h3>EMPRESA S.A DE C.V </h3>
-          <span style="font-size: 8px;">CAI: 11111-11111-11111-11111-11</span>
+          <h3 style="font-size: 10px;">{{empresa.razonSocial}}</h3>
+          <span style="font-size: 8px;">CAI: {{cai.cai}}</span>
           <div class="fila-e">
-            <span>CONTADO<span class="square"></span></span>
-            <span>VENDIDO A:</span>
+            <span style="font-size: 8px;">CONTADO <span class="square">{{contadoMark}}</span></span>
+            <span style="font-size: 8px;">VENDIDO A:</span>
           </div>
           <div class="fila-e">
-            <span>CREDITO <span class="square"></span></span>
-            <span>SOLD TO:</span>
+            <span style="font-size: 8px;">CREDITO <span class="square">{{creditoMark}}</span></span>
+            <span style="font-size: 8px;">SOLD TO:</span>
           </div>
 
         </div>
         <div class="center data-cliente">COD CLIENTE / CUSTOMER
           <div class="data-cliente-info" style="text-align: left ! important; margin-left: 10mm;">
             <br>
-            <span style="font-size: 8px;">NOMBRE: NOMBRE DE LA EMPRESA</span>
+            <span style="font-size: 8px;">NOMBRE: {{cliente.razonSocial}}</span>
             <br>
-            <span style="font-size: 8px;">DIRECCION: DIRECCION DE LA EMPRESA</span>
+            <span style="font-size: 8px;">DIRECCION: {{cliente.direccion}}</span>
             <br>
-            <span style="font-size: 8px;">RTN: 123456789</span>
+            <span style="font-size: 8px;">RTN: {{cliente.rtn}}</span>
             <br>
-            <span style="font-size: 8px;">CORREO ELECTRONICO: 5Yp4G@example.com</span>
+            <span style="font-size: 8px;">CORREO ELECTRONICO: {{empresa.correo}}</span>
             </div>
         </div>
         <div class="right data-factura">FACTURA
             <div class=" data-factura-info">
               <br>
-              <span style="font-size: 10px ; font-weight: bold;">000-000-00-00000000</span>
+              <span style="font-size: 10px ; font-weight: bold;">{{cai.mascaraFolio}}-{{headerFactura.correlativo}}</span>
               <br>
-              <span style="font-size: 8px;">RTN: 123456789</span>
+              <span style="font-size: 8px;">RTN: {{empresa.rtn}}</span>
               <br>
               <span style="font-size: 8px;">FACTURA SAP: 0000000000</span>
           </div>
@@ -368,7 +374,7 @@
             <span>FECHA DE EMISION/INVOICE DATE</span>
           </div>
           <div class="fila-e">
-            <span>11/11/2022</span>
+            <span>{{headerFactura.fechaEmision}}</span>
           </div>
         </div>
       </div>
@@ -379,7 +385,7 @@
             <span>OC/PO CLIENTE</span>
           </div>
           <div class="fila-e">
-            <span>{{oc}}</span>
+            <span>{{headerFactura.poCliente}}</span>
           </div>
         </div>
         <div class="info-cell">
@@ -393,7 +399,7 @@
             <span>ORDEN DE VENTA /SALES ORDER</span>
           </div>
           <div class="fila-e">
-            <span>{{oc}}</span>
+            <span>{{headerFactura.ordenVenta}}</span>
           </div>
         </div>
       </div>
@@ -429,16 +435,12 @@
           </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td>{{codigo}}</td>
-              <td class="desc">{{descripcion}}</td>
-              <td>{{unidad}}</td>
-              <td>{{precio_unitario}}</td>
-              <td>{{descuento}}</td>
-            </tr>
+            {{detalles}}
           </tbody>
       </table>
+      <div style="font-size: 10px; text-align: center;">
+        -------------------------------------ULTIMA LINEA-------------------------------------
+      </div>
     </div>
 
 
@@ -467,14 +469,14 @@
               <tr>
                 <td>11/11/2022</td>
                 <td>EFECTIVO</td>
-                <td>{{monto_abono}}</td>
+                <td>PENDIENTE</td>
               </tr>
           </table>
         </div>
         <div class="info-cell">
           <span
             style="font-size: 8px !important; display: flex ; justify-content: center; align-items: center; text-align: center; padding: 20px;">Todos
-            los montos indicados en esta factura estan expresados en: L. Lempira Hondureno</span>
+            los montos indicados en esta factura estan expresados en: L. Lempira Hondureño</span>
         </div>
         <div class="info-cell">
           <div class="info-cell-2">
@@ -482,7 +484,7 @@
               <span>CANTIDAD DE PIEZAS<span>
             </div>
             <div class="fila-e">
-              <span>{{cantidad_piezas}}</span>
+              <span>{{cantidadTotalArticulos}}</span>
             </div>
           </div>
           <div class="container-cells">
@@ -505,33 +507,33 @@
           </div>
           <br>
           <br>
-          <span>TERMINO PAGO / PAYMENT TERM<br>"Z090 <br>90 DIAS S/I"</span>
+          <span>TERMINO PAGO / PAYMENT TERM<br>{{headerFactura.terminoPago}} <br></span>
         </div>
         <div class="info-cell">
           <table>
             <tr style="text-align: right;">
-              <td>IMPORTE EXONERADO</td>
+              <td>IMPORTE EXONERADO: L. {{ exoneradoTotal }}</td>
             </tr>
             <tr style="text-align: right;">
-              <td>IMPORTE EXENTO</td>
+              <td>IMPORTE EXENTO: L. {{ exentoTotal }}</td>
             </tr>
             <tr style="text-align: right;">
-              <td>IMPORTE GRAVADO 15%</td>
+              <td>IMPORTE GRAVADO 15% L. {{ gravado15Total }}</td>
             </tr>
             <tr style="text-align: right;">
-              <td>IMPORTE GRAVADO 18%</td>
+              <td>IMPORTE GRAVADO 18% L. {{ gravado18Total }}</td>
             </tr>
             <tr style="text-align: right;">
-              <td>0% ISV</td>
+              <td>0% ISV L. 0.00</td>
             </tr>
             <tr style="text-align: right;">
-              <td>15% ISV</td>
+              <td>15% ISV L. {{ isv15Total }}</td>
             </tr>
             <tr style="text-align: right;">
-              <td>18% ISV</td>
+              <td>18% ISV L. {{ isv18Total }}</td>
             </tr>
             <tr style="text-align: right;">
-              <td>TRANSPORTE</td>
+              <td>TRANSPORTE L. {{ transporteTotal }}</td>
             </tr>
           </table>
         </div>
@@ -543,11 +545,11 @@
             <span>IMPORTE EN LETRAS/ TOTAL AMOUNT IN WORDS<span>
           </div>
           <div class="fila-e">
-            <span>{{monto_letras}}</span>
+            <span style="font-size: 10px; font-weight: bold;">{{monto_letras}}</span>
           </div>
         </div>
         <div class="info-cell" style="text-align: center; font-size: 12px !important;">
-          TOTAL L. {{total}}
+         <b>TOTAL L. {{ totalFactura }}</b> 
         </div>
       </div>
       <div class="recepcion-info-box">
@@ -588,10 +590,10 @@
         </div>
         <div class="info-cell">
           <div class="fila-e">
-            <span>RANGO AUTORIZADO: 000-001-01-00052002 A LA 000-001-01-00055001</span>
+            <span>RANGO AUTORIZADO: {{cai.rangoAutorizado}}</span>
           </div>
           <div class="fila-e">
-            <span>FECHA LIMITE DE EMISION: 10 DE OCTUBRE DEL 2025</span>
+            <span>FECHA LIMITE DE EMISION: {{cai.fechaLimiteEmision}}</span>
           </div>
         </div>
       </div>

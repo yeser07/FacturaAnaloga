@@ -11,6 +11,9 @@ const form = ref({
   cai: '',
   fechaLimiteEmision: '',
   rangoAutorizado: '',
+  folioInicial: '',
+  folioFinal: '',
+  mascaraFolio: '',
   estado: 'activo'
 })
 const editId = ref(null)
@@ -38,6 +41,7 @@ function limpiarFormulario() {
     rangoAutorizado: '',
     folioInicial: '',
     folioFinal: '',
+    mascaraFolio: '',
   }
   editId.value = null
 }
@@ -139,10 +143,11 @@ onMounted(cargar)
       <span style="font-size: 15px; color: white;">RANGO AUTORIZADO: 000-001-01-00052001 A LA 000-001-01-00055000</span><br>
       <span style="font-size: 15px; color: white;">FOLIO INICIAL Y FINAL: 00052001 A LA 00055000</span><br>
       <span style="font-size: 15px; color: white;">FECHA LIMITE DE EMISION: 10 DE OCTUBRE DEL 2025</span><br>
+      <span style="font-size: 15px; color: white;">MASCARA FOLIO: 000-001-01</span><br>
     </div>
 
     <!-- Tabla -->
-    <b-table striped hover bordered :items="registros" :fields="['cai', 'fechaLimiteEmision', 'rangoAutorizado','folioInicial','folioFinal', 'estado', 'acciones']" variant=dark  responsive="md">
+    <b-table striped hover bordered :items="registros" :fields="['cai', 'fechaLimiteEmision', 'rangoAutorizado','folioInicial','folioFinal', 'estado','mascaraFolio', 'acciones']" variant=dark  responsive="md">
       <template #cell(fechaLimiteEmision)="data">
         {{ data.item.fechaLimiteEmision}}
       </template>
@@ -176,6 +181,9 @@ onMounted(cargar)
         </b-form-group>
         <b-form-group label="Folio Final" class="mb-3">
           <b-form-input v-model="form.folioFinal" placeholder="Folio Final" />
+        </b-form-group>
+        <b-form-group label="Mascara Folio" class="mb-3">
+          <b-form-input v-model="form.mascaraFolio" placeholder="Mascara Folio" />
         </b-form-group>
         <div v-if="form.id">
           <b-form-group label="Estado" class="mb-3">

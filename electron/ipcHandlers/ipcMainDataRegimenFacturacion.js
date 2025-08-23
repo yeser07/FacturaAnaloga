@@ -5,7 +5,7 @@ const { DataRegimenFacturacion } = require('../models/dataRegimenFacturacion')
 // Crear
 ipcMain.handle('dataRegimen:create', async (event, data) => {
   try {
-    if (!data.cai || !data.fechaLimiteEmision || !data.rangoAutorizado || !data.folioInicial || !data.folioFinal) {
+    if (!data.cai || !data.fechaLimiteEmision || !data.rangoAutorizado || !data.folioInicial || !data.folioFinal || !data.mascaraFolio) {
       return { success: false, message: 'Datos incompletos' }
     }
     await DataRegimenFacturacion.create({ ...data })

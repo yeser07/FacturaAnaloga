@@ -1,8 +1,9 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, Menu } = require('electron')
 const path = require('path')
 const { sequelize } = require('./db')
-const { ipcMain } = require('electron')
-const { DataRegimenFacturacion } = require('./models/dataRegimenFacturacion')
+const { ipcMain } = require('electron');
+const { type } = require('os');
+
 
 ///IPC HANDLERS
 
@@ -10,6 +11,7 @@ require('./ipcHandlers/ipcMainDataRegimenFacturacion');
 require('./ipcHandlers/ipcHandlerEmpresa');
 require('./ipcHandlers/ipcHandlerCliente');
 require('./ipcHandlers/ipcHandlerProducto');
+require('./ipcHandlers/ipcHandlerFactura');
 
 
 //BD SQLITE
@@ -42,6 +44,34 @@ app.whenReady().then(async () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 })
+
+/*const template = [
+  {
+    label: 'File',
+    submenu: [
+      {
+        label: 'Print',
+        accelerator: 'CmdOrCtrl+P',
+        click() {
+          const focusedWindow = BrowserWindow.getFocusedWindow()
+          if (focusedWindow) {
+                        focusedWindow.webContents.print({ printBackground: true }, (success, failureReason) => {
+                            if (!success) console.error('Error al imprimir:', failureReason);
+                        });
+          }
+        }
+      },
+
+      {type: 'separator'},
+      {role: 'quit'}
+    ]
+  }
+];
+
+const menu = Menu.buildFromTemplate(template)
+Menu.setApplicationMenu(menu)*/
+
+
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()

@@ -27,7 +27,12 @@ const DataRegimenFacturacion = sequelize.define('dataRegimenFacturacion', {
   folioFinal: {
         type: DataTypes.INTEGER,
         allowNull: false
-    },  
+    },
+    
+    mascaraFolio: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
 
   estado: {
     type: DataTypes.STRING,

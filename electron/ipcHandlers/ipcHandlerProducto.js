@@ -22,12 +22,13 @@ ipcMain.handle('producto:create', async (event, data) => {
         let productoExistente = await Producto.findOne({ where: { codigo: codigoProducto } })
 
         if (productoExistente) {
-             productoExistente.update(data)
+            await productoExistente.update(data);
+            return { success: true, message: 'Producto actualizado correctamente' };
+        } else {
+            await Producto.create(data);
+            return { success: true, message: 'Producto creado correctamente' };
         }
-
-        await Producto.create(data)
-
-        return { success: true, message: 'Registro creado correctamente' }
+        
     } catch (error) {
         console.error('Error al crear registro:', error)
         return { success: false, message: error.message || 'Error desconocido' }

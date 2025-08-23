@@ -9,7 +9,7 @@
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h1 class="text-light">Factura Análoga</h1>
-      <b-button variant="success" pill> Generar Factura</b-button>
+      <b-button variant="success" pill size="sm" @click="generarFactura"> Generar Factura</b-button>
     </div>
 
     <!-- Datos principales -->
@@ -53,24 +53,23 @@
       <b-col md="6">
         <b-card bg-variant="dark" text-variant="white" class="mb-3 shadow-sm rounded-3">
           <h4 class="mb-3">Datos de la Factura</h4>
-
           <b-form-group label="Número Correlativo" label-for="numeroCorrelativo" label-class="text-white">
-            <b-form-input id="numeroCorrelativo" placeholder="Ingrese los últimos 8 dígitos" />
+            <b-form-input id="numeroCorrelativo" placeholder="Ingrese los últimos 8 dígitos" v-model="headerFacturaModel.correlativo"/>
             <small class="text-danger">Solo los últimos 8 dígitos del correlativo</small>
           </b-form-group>
 
           <b-form-group label="OC / PO Cliente" label-for="poCliente" label-class="text-white">
-            <b-form-input id="poCliente" placeholder="Ingrese el OC / PO Cliente" />
+            <b-form-input id="poCliente" placeholder="Ingrese el OC / PO Cliente" v-model="headerFacturaModel.poCliente" />
           </b-form-group>
 
           <b-form-group label="Orden de Venta" label-for="ordenVenta" label-class="text-white">
-            <b-form-input id="ordenVenta" placeholder="Ingrese la Orden de Venta" />
+            <b-form-input id="ordenVenta" placeholder="Ingrese la Orden de Venta"  v-model="headerFacturaModel.ordenVenta"/>
           </b-form-group>
 
           <b-row>
             <b-col md="6">
               <b-form-group label="Término de Venta" label-class="text-white">
-                <b-form-select>
+                <b-form-select id="terminoVenta" v-model="headerFacturaModel.terminoVenta">
                   <option value="0">Crédito</option>
                   <option value="1">Contado</option>
                 </b-form-select>
@@ -78,13 +77,13 @@
             </b-col>
             <b-col md="6">
               <b-form-group label="Término de Pago" label-class="text-white">
-                <b-form-input placeholder="Ingrese el Término de Pago" />
+                <b-form-input placeholder="Ingrese el Término de Pago" id="terminoPago"  v-model="headerFacturaModel.terminoPago"/>
               </b-form-group>
             </b-col>
           </b-row>
 
           <b-form-group label="Fecha de Emisión" label-for="fechaEmision" label-class="text-white">
-            <b-form-input type="date" id="fechaEmision" />
+            <b-form-input type="date" id="fechaEmision" v-model="headerFacturaModel.fechaEmision"/>
           </b-form-group>
         </b-card>
       </b-col>
@@ -246,6 +245,17 @@ const detalleFacturaModel = ref({
   descuento: 0,
   importe: 0,
   esquemaImpuesto: 'isv15'
+})
+
+const headerFacturaModel = ref({
+  //DDD-MM-YYYY
+  fechaEmision: new Date().toISOString().split('T')[0],
+  correlativo: '',
+  poCliente: '',
+  ordenVenta: '',
+  terminoVenta: 0,
+  terminoPago: ''
+
 })
 
 const esquemaImpuestosOpciones = [
@@ -432,6 +442,25 @@ function validarInputsProducto() {
   return true
 }
 
+function validarInputsHeaderFactura() {
+
+  /*const headerFacturaModel = ref({
+  //DDD-MM-YYYY
+  fechaEmision: new Date().toISOString().split('T')[0],
+  correlativo: '',
+  poCliente: '',
+  ordenVenta: '',
+  terminoVenta: 0,
+  terminoPago: ''
+
+})*/
+  if (!headerFacturaModel.value.correlativo) {
+    Swal.fire('Error', 'Por favor completa todos los campos obligatorios', 'error')
+    return false
+  }
+  return true
+}
+
 /*function eliminarProducto(index) {
   items.value.splice(index, 1)
 }*/
@@ -517,6 +546,54 @@ async function seleccionarProducto(codigoSeleccionado) {
     console.error('Error cargando producto', err);
   }
 }
+
+
+async function generarFactura() {
+  if (!validarInputsHeaderFactura()) return
+
+  const data = {
+    cliente: {
+      id: clienteResultado.value.id,
+      razonSocial: clienteResultado.value.razonSocial,
+      rtn: clienteResultado.value.rtn,
+      direccion: clienteResultado.value.direccion,
+      codigoCliente: clienteResultado.value.codigoCliente
+    },
+    detalles: items.value.map(item => ({
+      Cantidad: item.Cantidad,
+      CodigoArticulo: item["Codigo del Articulo"],
+      Descripcion: item.Descripcion,
+      PrecioUnitario: item["Precio Unitario"],
+      Descuento: item.Descuento,
+      Importe: item['Importe Neto']
+    })),
+    headerFactura: {
+      fechaEmision: headerFacturaModel.value.fechaEmision,
+      correlativo: headerFacturaModel.value.correlativo,
+      poCliente: headerFacturaModel.value.poCliente,
+      ordenVenta: headerFacturaModel.value.ordenVenta,
+      terminoVenta: headerFacturaModel.value.terminoVenta,
+      terminoPago: headerFacturaModel.value.terminoPago
+    },
+    exentoTotal: exentoTotal.value,
+    exoneradoTotal: exoneradoTotal.value,
+    gravado15Total: gravado15Total.value,
+    gravado18Total: gravado18Total.value,
+    isv15Total: isv15Total.value,
+    isv18Total: isv18Total.value,
+    transporteTotal: transporteTotal.value,
+    totalFactura: totalFactura.value
+  }
+
+  try {
+    const result = await window.api.generarFactura(data)
+    console.log("Resultado de factura:", result)
+  } catch (error) {
+    console.error("Error al generar factura:", error)
+  }
+}
+
+
 
 
 

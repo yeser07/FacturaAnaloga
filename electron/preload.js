@@ -31,5 +31,8 @@ contextBridge.exposeInMainWorld('api', {
   getAllProducto: () => ipcRenderer.invoke('producto:getAll'),
   getProductoByCodigo: (codigo) => ipcRenderer.invoke('producto:getProductoByCodigo', codigo),
 
+  //FACTURA
+ generarFactura : (data) => ipcRenderer.invoke('factura:generarFactura', data),
+
 
 })

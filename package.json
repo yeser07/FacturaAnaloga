@@ -18,6 +18,7 @@
     "concurrently": "^9.2.0",
     "cross-env": "^10.0.0",
     "electron": "^37.2.6",
+    "electron-builder": "^26.0.12",
     "vite": "^7.1.2"
   },
   "dependencies": {
@@ -29,5 +30,23 @@
     "sweetalert2": "^11.22.4",
     "vue": "^3.4.0",
     "vue-router": "^4.5.1"
+  },
+  "build": {
+    "appId": "com.tuempresa.facturaanaloga",
+    "productName": "Factura Analoga",
+    "directories": {
+      "output": "release"
+    },
+  "files": [
+      "dist/**",
+      "electron/**"
+    ],
+  "extraMetadata": {
+      "main": "electron/main.js"
+    },
+  "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    }
   }
 }

@@ -127,7 +127,7 @@ ipcMain.handle('factura:generarFactura', async (event, data) => {
         });
 
         browserWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(html)}`);
-        browserWindow.webContents.openDevTools();
+       // browserWindow.webContents.openDevTools();
 
         return { success: true, message: 'Factura creada exitosamente' }
 

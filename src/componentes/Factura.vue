@@ -266,7 +266,7 @@ const esquemaImpuestosOpciones = [
 ]
 
 
-const sugerencias = []
+const sugerencias = ref([])
 
 
 const showModalCliente = ref(false)
@@ -435,6 +435,7 @@ function validarInputsCliente() {
 }
 
 function validarInputsProducto() {
+  console.log(detalleFacturaModel.value)
   if (!detalleFacturaModel.value.cantidad || !detalleFacturaModel.value.precioUnitario || !detalleFacturaModel.value.esquemaImpuesto || !detalleFacturaModel.value.codigo || !detalleFacturaModel.value.descripcion) {
     Swal.fire('Error', 'Por favor completa todos los campos obligatorios', 'error')
     return false
@@ -505,47 +506,42 @@ async function guardarProductoBD(codigo, descripcion, precioUnitario) {
     console.log('Respuesta del backend Error: ', response.message)
   }
 }
-async function buscarProducto(codigo) {
-  if (codigo.length < 2) {
-    this.sugerencias = [];
-    return;
-  }
-
-  try {
-    const productos = await window.api.getProductoByCodigo(codigo);
-
-    if (productos && productos.length > 0) {
-
-      this.sugerencias = productos.map(p => ({
-        value: p.codigo,
-        text: `${p.codigo} - ${p.descripcion}`
-      }));
-    } else {
-      this.sugerencias = [];
-    }
-  } catch (err) {
-    console.error('Error buscando producto', err);
-  }
-}
-
-async function seleccionarProducto(codigoSeleccionado) {
-  try {
-    const productos = await window.api.getProductoByCodigo(codigoSeleccionado);
-
-    if (productos && productos.length > 0) {
-      const producto = productos.find(p => p.codigo === codigoSeleccionado);
-
-      if (producto) {
-        this.detalleFacturaModel.codigo = producto.codigo;
-        this.detalleFacturaModel.descripcion = producto.descripcion;
-        this.detalleFacturaModel.precioUnitario = producto.precio;
-        this.sugerencias = [];
+  async function buscarProducto(codigo) {
+      if (codigo.length < 2) {
+        sugerencias.value = []
+        return
+      }
+      try {
+        const productos = await window.api.getProductoByCodigo(codigo)
+        sugerencias.value = productos?.length
+          ? productos.map(p => ({
+              value: p.codigo,
+              text: `${p.codigo} - ${p.descripcion}`
+            }))
+          : []
+      } catch (err) {
+        console.error('Error buscando producto', err)
       }
     }
-  } catch (err) {
-    console.error('Error cargando producto', err);
-  }
-}
+
+    async function seleccionarProducto(codigoSeleccionado) {
+      console.log('Producto seleccionado:', codigoSeleccionado)
+      try {
+        const productos = await window.api.getProductoByCodigo(codigoSeleccionado)
+        const producto = productos?.find(p => p.codigo === codigoSeleccionado)
+        if (producto) {
+          console.log('producto seleccionado:', producto)
+          detalleFacturaModel.value.codigo = producto.codigo
+          detalleFacturaModel.value.descripcion = producto.descripcion
+          detalleFacturaModel.value.precioUnitario = producto.precio
+          console.log('detalleFacturaModel:', detalleFacturaModel)
+          sugerencias.value = []
+        }
+      } catch (err) {
+        console.error('Error cargando producto', err)
+      }
+    }
+
 
 
 async function generarFactura() {

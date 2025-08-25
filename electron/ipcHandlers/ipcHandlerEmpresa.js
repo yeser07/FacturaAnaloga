@@ -16,10 +16,11 @@ ipcMain.handle('empresa:create', async (event, data) => {
     const buffer = Buffer.from(base64Data, 'base64')
     const fs = require('fs')
     const path = require('path')
-
-    const logoPath = path.join(__dirname, 'uploads', `logo_${Date.now()}.png`)
+    /*PATH electron/uploads*/ 
+    const uploadsDir = path.join(__dirname, '..', 'uploads')
+    fs.mkdirSync(uploadsDir, { recursive: true })
+    const logoPath = path.join(uploadsDir, `logo_${Date.now()}.png`)
     fs.writeFileSync(logoPath, buffer)
-
     // Guardar en BD la ruta, no el base64
     await Empresa.create({
       ...data,

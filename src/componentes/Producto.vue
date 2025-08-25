@@ -41,13 +41,13 @@
         >
             <b-form @submit.prevent="saveProducto">
                 <b-form-group label="Código" label-for="codigo" class="mb-3">
-                    <b-form-input id="codigo" v-model="form.codigo" required></b-form-input>
+                    <b-form-input id="codigo" v-model="form.codigo"></b-form-input>
                 </b-form-group>
                 <b-form-group label="Descripción" label-for="descripcion" class="mb-3">
-                    <b-form-input id="descripcion" v-model="form.descripcion" required></b-form-input>
+                    <b-form-input id="descripcion" v-model="form.descripcion"></b-form-input>
                 </b-form-group>
                 <b-form-group label="Precio" label-for="precio" class="mb-4">
-                    <b-form-input id="precio" v-model="form.precio" type="number" step="0.01" required></b-form-input>
+                    <b-form-input id="precio" v-model="form.precio" type="number" step="0.01"></b-form-input>
                 </b-form-group>
                 <div class="d-flex justify-content-end">
                     <b-button variant="secondary" class="mr-2" @click="showModal = false">
@@ -100,6 +100,7 @@ export default {
         },
         async saveProducto() {
             try {
+                if(!this.validarInputsProducto()) return
                 if (this.editMode) {
                     await window.api.updateProducto(this.form.id, {
                         codigo: this.form.codigo,
@@ -153,6 +154,13 @@ export default {
                 descripcion: '',
                 precio: ''
             };
+        },
+        validarInputsProducto() {
+            if (!this.form.codigo || !this.form.descripcion || !this.form.precio) {
+                Swal.fire('Error', 'Por favor completa todos los campos obligatorios', 'error');
+                return false;
+            }
+            return true;
         }
     }
 };

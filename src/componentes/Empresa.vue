@@ -6,7 +6,7 @@
             <b-breadcrumb-item active>Empresa</b-breadcrumb-item>
             </div>
             <h2 class="text-center" style="font-size: 24px; font-weight: bold; color: white;">Gestion de Empresas</h2>
-            <b-button variant="primary" @click="abrirAgregar">Agregar Nuevo</b-button>
+            <b-button variant="primary" @click="abrirAgregar"><span class="bi bi-plus-circle mr-1"></span> Agregar</b-button>
         </div>
         <b-table striped hover bordered :items="registros" :fields="[ 'rtn','razonSocial', 'direccion', 'telefono', 'correo', 'acciones']" variant=dark  responsive="md">
             <template #cell(acciones)="data">

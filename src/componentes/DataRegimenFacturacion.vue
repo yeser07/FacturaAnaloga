@@ -134,7 +134,7 @@ onMounted(cargar)
           <b-breadcrumb-item active>Régimen de Facturación</b-breadcrumb-item>
         </div>
       <h2 class="text-center" style="font-size: 24px; font-weight: bold; color: white;">Gestión de Régimen de Facturación</h2>
-      <b-button variant="primary" @click="abrirAgregar">Agregar Nuevo</b-button>
+      <b-button variant="primary" @click="abrirAgregar"><span><span class="bi bi-plus-circle mr-1"></span> Agregar</span></b-button>
     </div>
     <div class="mb-3">
       <h2 class="text-center" style="font-size: 18px; font-weight: bold; color: white;">En esta tabla se detallan todos los requisitos que solicita el regimen de facturación</h2>

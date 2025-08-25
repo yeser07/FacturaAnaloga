@@ -10,27 +10,32 @@
       <b-row>
         <b-col md="6" class="mb-2">
           <b-form-group label="Razón Social:" label-for="razonSocial">
-            <b-form-input id="razonSocial" v-model="cliente.razonSocial" required/>
+            <b-form-input id="razonSocial" v-model="cliente.razonSocial"/>
           </b-form-group>
         </b-col>
         <b-col md="6" class="mb-2">
           <b-form-group label="RTN:" label-for="rtn">
-            <b-form-input id="rtn" v-model="cliente.rtn" required />
+            <b-form-input id="rtn" v-model="cliente.rtn" />
           </b-form-group>
         </b-col>
         <b-col md="6" class="mb-2">
           <b-form-group label="Dirección:" label-for="direccion">
-            <b-form-input id="direccion" v-model="cliente.direccion" required />
+            <b-form-input id="direccion" v-model="cliente.direccion" />
           </b-form-group>
         </b-col>
         <b-col md="6" class="mb-2">
           <b-form-group label="Código Cliente:" label-for="codigoCliente">
-            <b-form-input id="codigoCliente" v-model="cliente.codigoCliente" required />
+            <b-form-input id="codigoCliente" v-model="cliente.codigoCliente" />
           </b-form-group>
         </b-col>
       </b-row>
-      <b-button type="submit" variant="primary" class="mr-2">
-        {{ cliente.id ? 'Actualizar' : 'Agregar' }}
+        <b-button type="submit" variant="primary" class="me-2">
+        <span v-if="cliente.id">
+          <i class="bi bi-pencil me-1"></i> Actualizar
+        </span>
+        <span v-else>
+          <i class="bi bi-plus-circle me-1"></i> Agregar
+        </span>
       </b-button>
       <b-button type="button" variant="secondary" v-if="cliente.id" @click="cancelarEdicion">
         Cancelar
@@ -107,6 +112,8 @@ export default {
     },
     async guardarCliente() {
       try {
+        if (!this.validarInputsCliente()) return
+
         if (this.cliente.id) {
           await window.api.updateCliente(this.cliente.id, {
             razonSocial: this.cliente.razonSocial,
@@ -150,6 +157,14 @@ export default {
     },
     resetCliente() {
       this.cliente = { id: null, razonSocial: '', rtn: '', direccion: '', codigoCliente: '' }
+    },
+
+    validarInputsCliente() {
+      if (!this.cliente.rtn || !this.cliente.razonSocial || !this.cliente.direccion || !this.cliente.codigoCliente) {
+        Swal.fire('Error', 'Por favor completa todos los campos obligatorios', 'error')
+        return false
+      }
+      return true
     }
   }
 }

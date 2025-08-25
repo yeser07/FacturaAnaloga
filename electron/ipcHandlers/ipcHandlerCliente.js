@@ -23,3 +23,37 @@ ipcMain.handle('cliente:create', async (event, data) => {
         return { success: false, message: error.message || 'Error desconocido' }
     }
 })
+
+ipcMain.handle('cliente:update', async (event, id, data) => {
+    try {
+        const record = await Cliente.findByPk(id)
+        if (!record) {
+            return { success: false, message: 'Registro no encontrado' }
+        }
+        await record.update(data)
+        return {
+            success: true,
+            message: 'Registro actualizado correctamente',
+            data: record.get({ plain: true })
+        }
+    } catch (error) {
+        console.error('Error al actualizar registro:', error)
+        return { success: false, message: error.message || 'Error desconocido' }
+    }
+})
+
+ipcMain.handle('cliente:delete', async (event, id) => {
+    try {
+        const record = await Cliente.findByPk(id)
+        if (!record) {
+            return { success: false, message: 'Registro no encontrado' }
+        }
+        await record.destroy()
+        return { success: true, message: 'Registro eliminado correctamente' }
+    } catch (error) {
+        console.error('Error al eliminar registro:', error)
+        return { success: false, message: error.message || 'Error desconocido' }
+    }
+})
+
+

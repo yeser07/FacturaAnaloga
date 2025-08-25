@@ -22,14 +22,16 @@ contextBridge.exposeInMainWorld('api', {
   // CRUD Cliente
   createCliente: (data) => ipcRenderer.invoke('cliente:create', data),
   getAllCliente: () => ipcRenderer.invoke('cliente:getAll'),
-  //updateCliente: (id, data) => ipcRenderer.invoke('cliente:update', id, data),
-//  deleteCliente: (id) => ipcRenderer.invoke('cliente:delete', id),
+  updateCliente: (id, data) => ipcRenderer.invoke('cliente:update', id, data),
+ deleteCliente: (id) => ipcRenderer.invoke('cliente:delete', id),
 
 
   // CRUD Producto
   createProducto: (data) => ipcRenderer.invoke('producto:create', data),
   getAllProducto: () => ipcRenderer.invoke('producto:getAll'),
   getProductoByCodigo: (codigo) => ipcRenderer.invoke('producto:getProductoByCodigo', codigo),
+  updateProducto: (id, data) => ipcRenderer.invoke('producto:update', id, data),
+  deleteProducto: (id) => ipcRenderer.invoke('producto:delete', id),
 
   //FACTURA
  generarFactura : (data) => ipcRenderer.invoke('factura:generarFactura', data),

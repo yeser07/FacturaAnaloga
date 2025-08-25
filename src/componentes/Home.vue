@@ -52,30 +52,80 @@
 </template>
 
 <script setup>
+import Swal from 'sweetalert2'
 import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
 
 const router = useRouter()
 
 const goTo = (option) => {
-  switch(option) {
+  switch (option) {
     case 'regimen':
       router.push('/data-regimen-facturacion')
       break
+
     case 'factura':
-      router.push('/crear-factura')
-      break
+      if (empresas.value.length === 0) {
+        Swal.fire('Error', 'No hay empresas registradas', 'error')
+        router.push('/')
+        break
+      } else if (!caiActivo.value) {
+        Swal.fire('Error', 'No hay CAI activo', 'error')
+        router.push('/')
+        break
+      }else {
+        router.push('/crear-factura')
+        break
+      }
+
     case 'clientes':
       router.push('/clientes')
       break
+
     case 'productos':
       router.push('/productos')
       break
+
     case 'empresa':
       router.push('/empresa')
       break
   }
 }
+
+
+const empresas = ref([])
+const caiActivo = ref([])
+
+async function getEmpresa() {
+  const response = await window.api.getAllEmpresa()
+  if (Array.isArray(response)) {
+    empresas.value = response.map((e) => ({
+      id: e.dataValues.id,
+      razonSocial: e.dataValues.razonSocial,
+      rtn: e.dataValues.rtn,
+      direccion: e.dataValues.direccion,
+      codigoCliente: e.dataValues.codigoCliente
+    }))
+  }
+}
+
+async function getCaiActivo() {
+  const response = await window.api.getCaiActivo()
+  caiActivo.value = response 
+}
+
+
+
+onMounted(() => {
+  getEmpresa()
+  getCaiActivo()
+})
+
 </script>
+
+
+
+
 
 <style scoped>
 .menu-container {

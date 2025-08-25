@@ -1,7 +1,6 @@
 <template>
     <div class="container py-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h1>Empresa</h1>
             <div class="breadcrumb">
             <b-breadcrumb-item to="/">Inicio</b-breadcrumb-item>
             <b-breadcrumb-item active>Empresa</b-breadcrumb-item>

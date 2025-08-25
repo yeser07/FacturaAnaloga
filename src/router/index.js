@@ -6,6 +6,8 @@ import Home from '../componentes/Home.vue'
 import DataRegimenFacturacion from '../componentes/DataRegimenFacturacion.vue'
 import Empresa from '../componentes/Empresa.vue'
 import Factura from '../componentes/Factura.vue'
+import Cliente from '../componentes/Cliente.vue'
+import Producto from '../componentes/Producto.vue'
 
 const routes = [
     {
@@ -27,6 +29,16 @@ const routes = [
       path: '/crear-factura',
       name: 'CrearFactura',
       component: Factura
+    },
+    {
+      path: '/clientes',
+      name: 'Clientes',
+      component: Cliente
+    },
+    {
+      path: '/productos',
+      name: 'Productos',
+      component: Producto
     }
 ]
 

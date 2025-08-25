@@ -169,7 +169,7 @@ async function guardar() {
 async function eliminar(id ) {
   const result = await Swal.fire({
     title: '¿Estás seguro?',
-    text: "No podrás deshacer estaacción",
+    text: "No podrás deshacer esta acción",
     icon: 'warning',
     showCancelButton: true,
     confirmButtonText: 'Sí, eliminar',

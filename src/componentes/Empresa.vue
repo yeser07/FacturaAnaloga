@@ -10,8 +10,14 @@
         </div>
         <b-table striped hover bordered :items="registros" :fields="[ 'rtn','razonSocial', 'direccion', 'telefono', 'correo', 'acciones']" variant=dark  responsive="md">
             <template #cell(acciones)="data">
-                <b-button size="sm" variant="warning" @click="abrirEditar(data.item)"><span class="bi bi-pencil"></span></b-button>
-                <b-button size="sm" variant="danger" class="ms-2" @click="eliminar(data.item.id)"><span class="bi bi-trash"></span></b-button>
+                <div class="d-flex align-items-center">
+                    <b-button size="sm" variant="warning" class="me-2" @click="abrirEditar(data.item)">
+                        <i class="bi bi-pencil"></i>
+                    </b-button>
+                    <b-button size="sm" variant="danger" @click="eliminar(data.item.id)">
+                        <i class="bi bi-trash"></i>
+                    </b-button>
+                </div>
             </template>
             <template #empty>
                 <div class="text-center py-3">No hay registros</div>

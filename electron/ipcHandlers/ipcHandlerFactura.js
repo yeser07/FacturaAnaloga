@@ -163,34 +163,67 @@ function separadorMilesDecimales(valor){
     return conversion
 }
 
-
-
 function convertirNumeroALetras(num) {
+  if (num === null || num === undefined || !isFinite(num)) return '';
+  const negativo = num < 0;
+  if (negativo) num = Math.abs(num);
 
   const unidades = ["", "UNO", "DOS", "TRES", "CUATRO", "CINCO", "SEIS", "SIETE", "OCHO", "NUEVE"];
-  const decenas = ["", "DIEZ", "VEINTE", "TREINTA", "CUARENTA", "CINCUENTA", "SESENTA", "SETENTA", "OCHENTA", "NOVENTA"];
-  const centenas = ["", "CIEN", "DOSCIENTOS", "TRESCIENTOS", "CUATROCIENTOS", "QUINIENTOS", "SEISCIENTOS", "SETECIENTOS", "OCHOCIENTOS", "NOVECIENTOS"];
+  const especiales = {
+    10: "DIEZ", 11: "ONCE", 12: "DOCE", 13: "TRECE", 14: "CATORCE", 15: "QUINCE",
+    16: "DIECISEIS", 17: "DIECISIETE", 18: "DIECIOCHO", 19: "DIECINUEVE"
+  };
+  const decenas = ["", "", "VEINTE", "TREINTA", "CUARENTA", "CINCUENTA", "SESENTA", "SETENTA", "OCHENTA", "NOVENTA"];
+  const centenas = ["", "CIENTO", "DOSCIENTOS", "TRESCIENTOS", "CUATROCIENTOS", "QUINIENTOS", "SEISCIENTOS", "SETECIENTOS", "OCHOCIENTOS", "NOVECIENTOS"];
 
   function convertir(n) {
+    n = Math.floor(n);
     if (n === 0) return "CERO";
     if (n < 10) return unidades[n];
+    if (n < 20) return especiales[n] || ("DIEZ Y " + unidades[n - 10]);
     if (n < 100) {
-      return decenas[Math.floor(n / 10)] + (n % 10 !== 0 ? " Y " + unidades[n % 10] : "");
+      const t = Math.floor(n / 10);
+      const u = n % 10;
+      if (t === 2) { // 20..29 -> VEINTE, VEINTIUNO...
+        return u === 0 ? "VEINTE" : ("VEINTI" + unidades[u]);
+      }
+      return decenas[t] + (u !== 0 ? " Y " + unidades[u] : "");
     }
+    if (n === 100) return "CIEN";
     if (n < 1000) {
-      return centenas[Math.floor(n / 100)] + (n % 100 !== 0 ? " " + convertir(n % 100) : "");
+      const c = Math.floor(n / 100);
+      const resto = n % 100;
+      return centenas[c] + (resto !== 0 ? " " + convertir(resto) : "");
     }
     if (n < 1000000) {
       const miles = Math.floor(n / 1000);
       const resto = n % 1000;
-      return (miles > 1 ? convertir(miles) + " MIL" : "MIL") + (resto !== 0 ? " " + convertir(resto) : "");
+      const pref = miles === 1 ? "MIL" : convertir(miles) + " MIL";
+      return pref + (resto !== 0 ? " " + convertir(resto) : "");
+    }
+    // millones (soporte básico)
+    if (n < 1000000000000) {
+      const millones = Math.floor(n / 1000000);
+      const resto = n % 1000000;
+      const pref = millones === 1 ? "UN MILLON" : convertir(millones) + " MILLONES";
+      return pref + (resto !== 0 ? " " + convertir(resto) : "");
     }
     return "NÚMERO MUY GRANDE";
   }
 
-  const entero = Math.floor(num);
-  const decimales = Math.round((num - entero) * 100);
+  let entero = Math.floor(num);
+  let decimales = Math.round((num - entero) * 100);
 
-  return convertir(entero) + " LEMPIRAS" + (decimales > 0 ? " CON " + convertir(decimales) + " CENTAVOS" : "");
+  // Manejo cuando el redondeo de decimales produce 100
+  if (decimales === 100) {
+    entero += 1;
+    decimales = 0;
+  }
+
+  const textoEntero = convertir(entero);
+  const textoCentavos = decimales > 0 ? (" CON " + convertir(decimales) + " CENTAVOS") : "";
+
+  return (negativo ? "MENOS " : "") + textoEntero + " LEMPIRAS" + textoCentavos;
 }
+
 

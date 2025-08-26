@@ -46,7 +46,7 @@
     },
   "win": {
       "target": "nsis",
-      "icon": "./ico/favicoFA.ico"
+      "icon": "./ico/favico.ico"
     }
   }
 }

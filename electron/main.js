@@ -27,7 +27,7 @@ function createWindow() {
       nodeIntegration: false,
 
     },
-    icon: path.join(__dirname, 'ico', 'favicoFA.png')
+    icon: path.join(__dirname, 'ico', 'favico.ico')
   })
 
   if (process.env.NODE_ENV === 'development') {

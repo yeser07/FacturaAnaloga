@@ -584,11 +584,15 @@ async function generarFactura() {
   try {
     const result = await window.api.generarFactura(data)
     console.log("Resultado de factura:", result)
+    reloadComponent()
   } catch (error) {
     console.error("Error al generar factura:", error)
   }
 }
 
+function reloadComponent() {
+  window.location.reload()
+}
 
 
 

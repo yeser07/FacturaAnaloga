@@ -34,14 +34,13 @@ ipcMain.handle('dataRegimen:update', async (event, id, data) => {
     }
 
     if (data.estado === "activo") {
-      console.log('id que viene', id)
       const otroActivo = await DataRegimenFacturacion.findOne({
             where: {
               estado: 'activo'
             }
       });
 
-      if (otroActivo) {
+      if (otroActivo && otroActivo.id !== id) {
         console.log('otroActivo', otroActivo)
         return { success: false, message: 'Ya existe un régimen activo' }
       }

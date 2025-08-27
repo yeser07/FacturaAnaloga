@@ -306,6 +306,14 @@
         display: none;
       }
     }
+
+    .logos img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      filter: grayscale(100%) brightness(0) invert(0);
+      margin: 5px;
+    }
   </style>
 </head>
 
@@ -586,7 +594,9 @@
 
       <div class="logos-rango">
         <div class="info-cell">
-          <span>LOGOS</span>
+          <div class="logos">
+            {{logosHTML}}
+          </div>
         </div>
         <div class="info-cell">
           <div class="fila-e">

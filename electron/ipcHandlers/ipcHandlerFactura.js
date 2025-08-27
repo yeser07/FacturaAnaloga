@@ -71,6 +71,13 @@ ipcMain.handle('factura:generarFactura', async (event, data) => {
         const fechaLimite = formatoFechaLiteral(cai.fechaLimiteEmision);
         const monto_letras = convertirNumeroALetras(totalFactura);
 
+        const logosHTML = `
+            <img src="${logoToBase64(path.join(__dirname, '..', 'logos', 'mabe.webp'))}" alt="Logo Mabe">
+            <img src="${logoToBase64(path.join(__dirname, '..', 'logos', 'haier.webp'))}" alt="Logo Haier">
+            <img src="${logoToBase64(path.join(__dirname, '..', 'logos', 'cetron.webp'))}" alt="Logo Cetron">
+            <img src="${logoToBase64(path.join(__dirname, '..', 'logos', 'ge.png'))}" alt="Logo GE" style="width: 50px;">
+            `;
+
 
         const html = template
             .replace(/{{empresa.razonSocial}}/g, empresa.razonSocial)
@@ -112,6 +119,7 @@ ipcMain.handle('factura:generarFactura', async (event, data) => {
             .replace(/{{creditoMark}}/g, creditoMark)
             .replace(/{{\s*cantidadTotalArticulos\s*}}/g, cantidadTotalArticulos)
             .replace(/{{monto_letras}}/g, monto_letras)
+            .replace(/{{logosHTML}}/g, logosHTML)
             ;
 
         const browserWindow = new BrowserWindow({
@@ -227,3 +235,13 @@ function convertirNumeroALetras(num) {
 }
 
 
+function logoToBase64(pathLogo) {
+  try {
+    const buffer = fs.readFileSync(pathLogo);
+    const ext = path.extname(pathLogo).slice(1); // e.g. 'webp' or 'png'
+    return `data:image/${ext};base64,${buffer.toString('base64')}`;
+  } catch (err) {
+    console.error(`Error leyendo ${pathLogo}:`, err);
+    return '';
+  }
+}

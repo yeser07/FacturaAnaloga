@@ -13,3 +13,8 @@ const app = createApp(App)
 app.use(BootstrapVueNext)
 app.use(router)
 app.mount('#app')
+
+
+window.electronAPI.onNavigateVue((event, path) => {
+    router.push(path)
+})

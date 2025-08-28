@@ -36,5 +36,8 @@ contextBridge.exposeInMainWorld('api', {
   //FACTURA
  generarFactura : (data) => ipcRenderer.invoke('factura:generarFactura', data),
 
-
 })
+
+contextBridge.exposeInMainWorld('electronAPI', {
+  onNavigateVue: (callback) => ipcRenderer.on('navegar-vue', callback)
+});

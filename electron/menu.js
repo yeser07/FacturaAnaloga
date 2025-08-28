@@ -6,6 +6,35 @@ function createAppMenu() {
     {
       label: 'Archivo',
       submenu: [
+        {
+          label: 'Inicio',
+          click: () => {
+            const win = BrowserWindow.getFocusedWindow();
+            win.webContents.send('navegar-vue', '/');
+          }
+        },
+        {
+            label: 'Crear Factura',
+            click: () => {
+              const win = BrowserWindow.getFocusedWindow();
+              win.webContents.send('navegar-vue', '/crear-factura');
+            }
+        },
+        {
+          label: 'Clientes',
+          click: () => {
+            const win = BrowserWindow.getFocusedWindow();
+            win.webContents.send('navegar-vue', '/clientes');
+          }
+        },
+        {
+          label: 'Productos',
+          click: () => {
+            const win = BrowserWindow.getFocusedWindow();
+            win.webContents.send('navegar-vue', '/productos');
+          }
+        },
+        { type: 'separator' },
         { role: 'quit', label: 'Salir' }
       ]
     },

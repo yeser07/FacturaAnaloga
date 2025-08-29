@@ -39,7 +39,7 @@ ipcMain.handle('factura:generarFactura', async (event, data) => {
             }
         );
 
-        const cantidadTotalArticulos = detalles.reduce((total, detalle) => total + detalle.Cantidad, 0);
+        const cantidadTotalArticulos = detalles.reduce((total, detalle) => total + detalle.Cantidad, 0).toFixed(2);
 
         const templatePath = path.join(__dirname, '..', 'plantillaFactura', 'FacturaAnaloga.html');
         const template = fs.readFileSync(templatePath, 'utf-8');

@@ -487,35 +487,23 @@
             los montos indicados en esta factura estan expresados en: L. Lempira Hondureño</span>
         </div>
         <div class="info-cell">
-          <div class="info-cell-2">
-            <div class="fila-e">
-              <span>CANTIDAD DE PIEZAS<span>
-            </div>
-            <div class="fila-e">
-              <span>{{cantidadTotalArticulos}}</span>
-            </div>
-          </div>
           <div class="container-cells">
-            <div class="info-cell-3">
-              <div class="fila-e">
-                <span>PESO NETO<span>
-              </div>
-              <div class="fila-e">
-                <span>{{peso_neto}}</span>
-              </div>
-            </div>
-            <div class="info-cell-3">
-              <div class="fila-e">
-                <span>PESO BRUTO<span>
-              </div>
-              <div class="fila-e">
-                <span>{{peso_bruto}}</span>
-              </div>
-            </div>
+            <table class="tabla-logistica" style="border-collapse: collapse; width: 300px; font-family: Arial, sans-serif;">
+              <tr>
+                <th style="font-size: 8px; text-align: left; padding: 6px;">CANTIDAD DE PIEZAS</th>
+                <td style="padding: 6px; text-align: right;">{{cantidadTotalArticulos}}</td>
+              </tr>
+              <tr>
+                <th style="font-size: 8px; text-align: left; padding: 6px;">PESO NETO</th>
+                <td style=" padding: 6px; text-align: right;">2183.50</td>
+              </tr>
+              <tr>
+                <th style="font-size: 8px; text-align: left;  padding: 6px;">PESO BRUTO</th>
+                <td style=" padding: 6px; text-align: right;">2295.00</td>
+              </tr>
+            </table>
           </div>
-          <br>
-          <br>
-          <span>TERMINO PAGO / PAYMENT TERM<br>{{headerFactura.terminoPago}} <br></span>
+          <span style="font-size: 10px !important;font-weight: bold;" >TERMINO PAGO / PAYMENT TERM<br>{{headerFactura.terminoPago}} <br></span>
         </div>
         <div class="info-cell">
           <table>

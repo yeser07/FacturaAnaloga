@@ -36,8 +36,16 @@ contextBridge.exposeInMainWorld('api', {
   //FACTURA
  generarFactura : (data) => ipcRenderer.invoke('factura:generarFactura', data),
 
+
+ // Navegacion
+  onNavigateVue: (callback) => ipcRenderer.on('navegar-vue', callback),
+  onBuscar: (callback) => ipcRenderer.on('activar-busqueda', () => callback()),
+  buscarEnPagina: (texto) => ipcRenderer.send('find-in-page', texto),
+  buscarSiguiente: (texto) => ipcRenderer.send('find-in-page-next', texto),
+  buscarAnterior: (texto) => ipcRenderer.send('find-in-page-prev', texto),
+  detenerBusqueda: () => ipcRenderer.send('stop-find-in-page')
+
+
+
 })
 
-contextBridge.exposeInMainWorld('electronAPI', {
-  onNavigateVue: (callback) => ipcRenderer.on('navegar-vue', callback)
-});

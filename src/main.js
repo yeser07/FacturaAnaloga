@@ -15,6 +15,6 @@ app.use(router)
 app.mount('#app')
 
 
-window.electronAPI.onNavigateVue((event, path) => {
+window.api.onNavigateVue((event, path) => {
     router.push(path)
 })

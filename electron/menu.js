@@ -47,7 +47,17 @@ function createAppMenu() {
         { role: 'cut' },
         { role: 'copy' },
         { role: 'paste' },
-        { role: 'selectAll' }
+        { role: 'selectAll' },
+        {
+          label: 'Buscar',
+          accelerator: 'Ctrl+F',
+          click: () => {
+            const win = BrowserWindow.getFocusedWindow();
+            if (win) {
+              win.webContents.send('activar-busqueda');
+            }
+          }
+        }
       ]
     },
     {

@@ -13,6 +13,7 @@ require('./ipcHandlers/ipcHandlerEmpresa');
 require('./ipcHandlers/ipcHandlerCliente');
 require('./ipcHandlers/ipcHandlerProducto');
 require('./ipcHandlers/ipcHandlerFactura');
+require('./ipcHandlers/ipcBusquedaPagina');
 
 
 //BD SQLITE

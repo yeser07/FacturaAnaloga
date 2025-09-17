@@ -8,7 +8,7 @@
         @click="goTo('regimen')"
       >
         <i class="bi bi-file-text mb-2" style="font-size: 24px;"></i>
-        Data Regimen
+        Data Regimen Facturación
       </b-button>
 
         <b-button

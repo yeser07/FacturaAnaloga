@@ -54,6 +54,7 @@
         <b-card bg-variant="dark" text-variant="white" class="mb-3 shadow-sm rounded-3">
           <h4 class="mb-3">Datos de la Factura</h4>
           <b-form-group label="Número Correlativo" label-for="numeroCorrelativo" label-class="text-white">
+            <span class=""> 000-001-01</span>
             <b-form-input id="numeroCorrelativo" placeholder="Ingrese los últimos 8 dígitos" v-model="headerFacturaModel.correlativo"/>
             <small class="text-danger">Solo los últimos 8 dígitos del correlativo</small>
           </b-form-group>

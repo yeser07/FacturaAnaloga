@@ -66,6 +66,21 @@
           <b-form-group label="Orden de Venta" label-for="ordenVenta" label-class="text-white">
             <b-form-input id="ordenVenta" placeholder="Ingrese la Orden de Venta"  v-model="headerFacturaModel.ordenVenta"/>
           </b-form-group>
+          <b-form-group label="Factura SAP" label-for="facturaSap" label-class="text-white">
+            <b-form-input id="facturaSap" placeholder="Ingrese la Factura SAP"  v-model="headerFacturaModel.facturaSap"/>
+          </b-form-group>
+            <b-row>
+              <b-col md="6">
+                <b-form-group label="Peso Neto" label-for="pesoNeto" label-class="text-white">
+                  <b-form-input  id="pesoNeto" v-model="headerFacturaModel.pesoNeto"/>
+                </b-form-group>
+              </b-col>
+              <b-col md="6">
+                <b-form-group label="Peso Bruto" label-for="pesoBruto" label-class="text-white">
+                  <b-form-input id="pesoBruto" v-model="headerFacturaModel.pesoBruto"/>
+                </b-form-group>
+              </b-col>
+            </b-row>
 
           <b-row>
             <b-col md="6">
@@ -255,7 +270,10 @@ const headerFacturaModel = ref({
   poCliente: '',
   ordenVenta: '',
   terminoVenta: 0,
-  terminoPago: ''
+  terminoPago: '',
+  facturaSap: '',
+  pesoNeto: 0,
+  pesoBruto: 0
 
 })
 
@@ -570,7 +588,10 @@ async function generarFactura() {
       poCliente: headerFacturaModel.value.poCliente,
       ordenVenta: headerFacturaModel.value.ordenVenta,
       terminoVenta: headerFacturaModel.value.terminoVenta,
-      terminoPago: headerFacturaModel.value.terminoPago
+      terminoPago: headerFacturaModel.value.terminoPago,
+      facturaSap: headerFacturaModel.value.facturaSap,
+      pesoNeto: headerFacturaModel.value.pesoNeto,
+      pesoBruto: headerFacturaModel.value.pesoBruto,
     },
     exentoTotal: exentoTotal.value,
     exoneradoTotal: exoneradoTotal.value,

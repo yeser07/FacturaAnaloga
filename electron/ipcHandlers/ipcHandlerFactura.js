@@ -120,6 +120,9 @@ ipcMain.handle('factura:generarFactura', async (event, data) => {
             .replace(/{{\s*cantidadTotalArticulos\s*}}/g, cantidadTotalArticulos)
             .replace(/{{monto_letras}}/g, monto_letras)
             .replace(/{{logosHTML}}/g, logosHTML)
+            .replace(/{{headerFactura.facturaSap}}/g, headerFactura.facturaSap)
+            .replace(/{{headerFactura.pesoNeto}}/g, headerFactura.pesoNeto.toFixed(2))
+            .replace(/{{headerFactura.pesoBruto}}/g, headerFactura.pesoBruto.toFixed(2))
             ;
 
         const browserWindow = new BrowserWindow({

@@ -357,7 +357,7 @@
               <br>
               <span style="font-size: 8px;">RTN: {{empresa.rtn}}</span>
               <br>
-              <span style="font-size: 8px;">FACTURA SAP: 0000000000</span>
+              <span style="font-size: 8px;">FACTURA SAP: {{headerFactura.facturaSap}}</span>
           </div>
         </div>
       </div>
@@ -495,11 +495,11 @@
               </tr>
               <tr>
                 <th style="font-size: 8px; text-align: left; padding: 6px;">PESO NETO</th>
-                <td style=" padding: 6px; text-align: right;">2183.50</td>
+                <td style=" padding: 6px; text-align: right;">{{headerFactura.pesoNeto}}</td>
               </tr>
               <tr>
                 <th style="font-size: 8px; text-align: left;  padding: 6px;">PESO BRUTO</th>
-                <td style=" padding: 6px; text-align: right;">2295.00</td>
+                <td style=" padding: 6px; text-align: right;">{{headerFactura.pesoBruto}}</td>
               </tr>
             </table>
           </div>

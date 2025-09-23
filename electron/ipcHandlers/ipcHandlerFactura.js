@@ -78,7 +78,7 @@ ipcMain.handle('factura:generarFactura', async (event, data) => {
             <img src="${logoToBase64(path.join(__dirname, '..', 'logos', 'mabe.webp'))}" alt="Logo Mabe">
             <img src="${logoToBase64(path.join(__dirname, '..', 'logos', 'haier.webp'))}" alt="Logo Haier">
             <img src="${logoToBase64(path.join(__dirname, '..', 'logos', 'cetron.webp'))}" alt="Logo Cetron">
-            <img src="${logoToBase64(path.join(__dirname, '..', 'logos', 'ge.png'))}" alt="Logo GE" style="width: 50px;">
+            <img src="${logoToBase64(path.join(__dirname, '..', 'logos', 'ge.png'))}" alt="Logo GE" style="width: 40px !important;">
             `;
 
 

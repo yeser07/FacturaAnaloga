@@ -8,7 +8,7 @@
     @page {
       size: Letter;
       margin: 0;
-      margin-left: 5mm;
+      margin-left: 2mm;
     }
 
     body {
@@ -309,7 +309,7 @@
 
     .logos img {
       width: 80px;
-      height: 80px;
+      height: 50px;
       object-fit: contain;
       filter: grayscale(100%) brightness(0) invert(0);
       margin: 5px;
@@ -507,29 +507,37 @@
         </div>
         <div class="info-cell">
           <table>
-            <tr style="text-align: right;">
-              <td>IMPORTE EXONERADO: L. {{ exoneradoTotal }}</td>
+            <tr>
+              <td style="text-align: right; white-space: nowrap;">IMPORTE EXONERADO: L.</td>
+              <td style="text-align: left; padding-left: 5px;">{{ exoneradoTotal }}</td>
             </tr>
-            <tr style="text-align: right;">
-              <td>IMPORTE EXENTO: L. {{ exentoTotal }}</td>
+            <tr>
+              <td style="text-align: right; white-space: nowrap;">IMPORTE EXENTO: L.</td>
+              <td style="text-align: left; padding-left: 5px;">{{ exentoTotal }}</td>
             </tr>
-            <tr style="text-align: right;">
-              <td>IMPORTE GRAVADO 15% L. {{ gravado15Total }}</td>
+            <tr>
+              <td style="text-align: right; white-space: nowrap;">IMPORTE GRAVADO 15%: L.</td>
+              <td style="text-align: left; padding-left: 5px;">{{ gravado15Total }}</td>
             </tr>
-            <tr style="text-align: right;">
-              <td>IMPORTE GRAVADO 18% L. {{ gravado18Total }}</td>
+            <tr>
+               <td style="text-align: right; white-space: nowrap;">IMPORTE GRAVADO 18%: L.</td>
+              <td style="text-align: left; padding-left: 5px;">{{ gravado18Total }}</td>
             </tr>
-            <tr style="text-align: right;">
-              <td>0% ISV L. 0.00</td>
+            <tr>
+               <td style="text-align: right; white-space: nowrap;">0% ISV L.</td>
+              <td style="text-align: left; padding-left: 5px;">0.00</td>
             </tr>
-            <tr style="text-align: right;">
-              <td>15% ISV L. {{ isv15Total }}</td>
+            <tr>
+              <td style="text-align: right; white-space: nowrap;">15% ISV: L.</td>
+              <td style="text-align: left; padding-left: 5px;">{{ isv15Total }}</td>
             </tr>
-            <tr style="text-align: right;">
-              <td>18% ISV L. {{ isv18Total }}</td>
+            <tr>
+              <td style="text-align: right; white-space: nowrap;">18% ISV L.</td>
+              <td style="text-align: left; padding-left: 5px;">{{ isv18Total }}</td>
             </tr>
-            <tr style="text-align: right;">
-              <td>TRANSPORTE L. {{ transporteTotal }}</td>
+            <tr>
+              <td style="text-align: right; white-space: nowrap;">TRANSPORTE L.</td>
+              <td style="text-align: left; padding-left: 5px;">{{ transporteTotal }}</td>
             </tr>
           </table>
         </div>

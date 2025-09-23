@@ -1,6 +1,7 @@
 const {ipcMain,BrowserWindow} = require('electron')
 const {Empresa} = require('../models/empresa')
 const {DataRegimenFacturacion} = require('../models/dataRegimenFacturacion')
+const bwipjs = require("bwip-js");
 
 const  fs = require('fs');
 const path = require('path');
@@ -70,6 +71,8 @@ ipcMain.handle('factura:generarFactura', async (event, data) => {
 
         const fechaLimite = formatoFechaLiteral(cai.fechaLimiteEmision);
         const monto_letras = convertirNumeroALetras(totalFactura);
+        const codigoBarraSVG = await generarBarCode(headerFactura.facturaSap);
+        console.log('codigoBarraSVG:', codigoBarraSVG);
 
         const logosHTML = `
             <img src="${logoToBase64(path.join(__dirname, '..', 'logos', 'mabe.webp'))}" alt="Logo Mabe">
@@ -121,8 +124,9 @@ ipcMain.handle('factura:generarFactura', async (event, data) => {
             .replace(/{{monto_letras}}/g, monto_letras)
             .replace(/{{logosHTML}}/g, logosHTML)
             .replace(/{{headerFactura.facturaSap}}/g, headerFactura.facturaSap)
-            .replace(/{{headerFactura.pesoNeto}}/g, headerFactura.pesoNeto.toFixed(2))
-            .replace(/{{headerFactura.pesoBruto}}/g, headerFactura.pesoBruto.toFixed(2))
+            .replace(/{{headerFactura.pesoNeto}}/g, headerFactura.pesoNeto)
+            .replace(/{{headerFactura.pesoBruto}}/g, headerFactura.pesoBruto)
+            .replace(/{{codigoBarraSVG}}/g, codigoBarraSVG)
             ;
 
         const browserWindow = new BrowserWindow({
@@ -245,6 +249,27 @@ function logoToBase64(pathLogo) {
     return `data:image/${ext};base64,${buffer.toString('base64')}`;
   } catch (err) {
     console.error(`Error leyendo ${pathLogo}:`, err);
+    return '';
+  }
+}
+
+
+async function generarBarCode(facturaSap) {
+  const stringBarCode = `FACN-2005-${facturaSap}-2005`;
+
+  try {
+    const png = await bwipjs.toBuffer({
+      bcid: 'code128',      
+      text: stringBarCode,   
+      scale: 10,             
+      height: 12,          
+      includetext: true, 
+    });
+    const base64 = `data:image/png;base64,${png.toString('base64')}`;
+    return `<img src="${base64}" alt="Código de barras"/>`;
+
+  } catch (err) {
+    console.error('Error al generar código de barras:', err);
     return '';
   }
 }

@@ -72,12 +72,12 @@
             <b-row>
               <b-col md="6">
                 <b-form-group label="Peso Neto" label-for="pesoNeto" label-class="text-white">
-                  <b-form-input  id="pesoNeto" v-model="headerFacturaModel.pesoNeto"/>
+                  <b-form-input  id="pesoNeto" v-model="headerFacturaModel.pesoNeto" type="number"/>
                 </b-form-group>
               </b-col>
               <b-col md="6">
                 <b-form-group label="Peso Bruto" label-for="pesoBruto" label-class="text-white">
-                  <b-form-input id="pesoBruto" v-model="headerFacturaModel.pesoBruto"/>
+                  <b-form-input id="pesoBruto" v-model="headerFacturaModel.pesoBruto" type="number"/>
                 </b-form-group>
               </b-col>
             </b-row>
@@ -251,6 +251,9 @@ const clienteModel = ref({
   codigoCliente: ''
 })
 
+const folioFinal = ref(null)
+const folioInicial = ref(null)
+
 
 
 const detalleFacturaModel = ref({
@@ -345,8 +348,15 @@ const totalFactura = computed(() => {
   ).toFixed(2)
 })
 
+let contadorLineasDetalle = 1
+
 async function guardarProducto() {
   if (!validarInputsProducto()) return
+
+  if (contadorLineasDetalle > 12) {
+    Swal.fire('Error', 'No se pueden agregar más de 12 productos por factura.', 'error')
+    return
+  }
 
   const cantidad = parseFloat(detalleFacturaModel.value.cantidad) || 0
   const codigo = detalleFacturaModel.value.codigo || ''
@@ -377,7 +387,7 @@ async function guardarProducto() {
   })
 
   guardarProductoBD( codigo, descripcion, precioUnitario)
-
+ contadorLineasDetalle++
   limpiarModalProducto()
 }
 
@@ -463,28 +473,50 @@ function validarInputsProducto() {
 }
 
 function validarInputsHeaderFactura() {
-
-  /*const headerFacturaModel = ref({
-  //DDD-MM-YYYY
-  fechaEmision: new Date().toISOString().split('T')[0],
-  correlativo: '',
-  poCliente: '',
-  ordenVenta: '',
-  terminoVenta: 0,
-  terminoPago: ''
-
-})*/
   if (!headerFacturaModel.value.correlativo) {
-    Swal.fire('Error', 'Por favor completa todos los campos obligatorios', 'error')
+    Swal.fire('Error', 'Por favor completa todos los campos obligatorios, el campo correlativo es obligatorio', 'error')
+    return false
+  } 
+
+  if (headerFacturaModel.value.correlativo.length !== 8) {
+    Swal.fire('Error', 'El correlativo debe tener exactamente 8 dígitos', 'error')
     return false
   }
+
+  const correlativoNum = parseInt(headerFacturaModel.value.correlativo, 10)
+
+  if (correlativoNum < folioInicial.value || correlativoNum > folioFinal.value) {
+    Swal.fire('Error', `El correlativo debe estar entre ${folioInicial.value} y ${folioFinal.value}`, 'error')
+    return false
+  }
+
+  if (!headerFacturaModel.value.poCliente){
+    Swal.fire('Error', 'Por favor completa todos los campos obligatorios, el campo PO del cliente es obligatorio', 'error')
+    return false
+  }
+  if (!headerFacturaModel.value.ordenVenta){
+    Swal.fire('Error', 'Por favor completa todos los campos obligatorios el campo orden de venta es obligatorio', 'error')
+    return false
+  }
+  if (!headerFacturaModel.value.terminoPago){
+    Swal.fire('Error', 'Por favor completa todos los campos obligatorios el campo termino de pago es obligatorio', 'error')
+    return false
+  }
+  if(!headerFacturaModel.value.facturaSap){
+    Swal.fire('Error', 'Por favor completa todos los campos obligatorios, el campo factura SAP es obligatorio', 'error')
+    return false
+  }
+  if (items.value.length === 0) {
+    Swal.fire('Error', 'La factura debe tener al menos un producto en el detalle', 'error')
+    return false
+  }
+  if (!clienteResultado.value) {
+    Swal.fire('Error', 'Por favor selecciona un cliente para la factura', 'error')
+    return false
+  }
+
   return true
 }
-
-/*function eliminarProducto(index) {
-  items.value.splice(index, 1)
-}*/
-
 
 
 
@@ -617,10 +649,38 @@ function reloadComponent() {
 }
 
 
+function getMinMaxCaiActivo() {
+  return window.api.getCaiActivo()
+    .then(cai => {
+      if (cai) {
+        return {
+          min: cai.dataValues.folioInicial,
+          max: cai.dataValues.folioFinal
+        }
+      } else {
+        Swal.fire('Error', 'No hay CAI activo. Por favor, configure un CAI antes de generar facturas.', 'error')
+        throw new Error('No CAI activo')
+      }
+    })
+    .catch(err => {
+      console.error('Error obteniendo CAI activo:', err)
+      Swal.fire('Error', 'No se pudo obtener el CAI activo.', 'error')
+      throw err
+    })
+}
 
 
-onMounted(() => {
+
+onMounted(async () => {
   getClientes()
+    try {
+    const { min, max } = await getMinMaxCaiActivo()
+    folioInicial.value = min
+    folioFinal.value = max
+
+  } catch (err) {
+    console.error('Error en onMounted:', err)
+  }
 })
 </script>
 

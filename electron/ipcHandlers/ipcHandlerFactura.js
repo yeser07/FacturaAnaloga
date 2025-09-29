@@ -72,7 +72,9 @@ ipcMain.handle('factura:generarFactura', async (event, data) => {
         const fechaLimite = formatoFechaLiteral(cai.fechaLimiteEmision);
         const monto_letras = convertirNumeroALetras(totalFactura);
         const codigoBarraSVG = await generarBarCode(headerFactura.facturaSap);
-        console.log('codigoBarraSVG:', codigoBarraSVG);
+
+        const pesoNeto = parseFloat(headerFactura.pesoNeto).toFixed(2);
+        const pesoBruto = parseFloat(headerFactura.pesoBruto).toFixed(2);
 
         const logosHTML = `
             <img src="${logoToBase64(path.join(__dirname, '..', 'logos', 'mabe.webp'))}" alt="Logo Mabe">
@@ -124,8 +126,8 @@ ipcMain.handle('factura:generarFactura', async (event, data) => {
             .replace(/{{monto_letras}}/g, monto_letras)
             .replace(/{{logosHTML}}/g, logosHTML)
             .replace(/{{headerFactura.facturaSap}}/g, headerFactura.facturaSap)
-            .replace(/{{headerFactura.pesoNeto}}/g, headerFactura.pesoNeto)
-            .replace(/{{headerFactura.pesoBruto}}/g, headerFactura.pesoBruto)
+            .replace(/{{headerFactura.pesoNeto}}/g, pesoNeto)
+            .replace(/{{headerFactura.pesoBruto}}/g, pesoBruto)
             .replace(/{{codigoBarraSVG}}/g, codigoBarraSVG)
             ;
 

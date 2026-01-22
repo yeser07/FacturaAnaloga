@@ -83,7 +83,12 @@ ipcMain.handle('factura:generarFactura', async (event, data) => {
             <img src="${logoToBase64(path.join(__dirname, '..', 'logos', 'ge.png'))}" alt="Logo GE" style="width: 40px !important;">
             `;
 
-        const { fechasPago, pagos } = handleTerminoPagoOptions(headerFactura.terminoPago, new Date(headerFactura.fechaEmision), totalFactura);
+        const dia = 24 * 60 * 60 * 1000;  ///DIA MILISEGUNDOS ADICIONAL, PARA QUE NO HAYA PROBLEMAS CON EL UTC           
+        const { fechasPago, pagos } = handleTerminoPagoOptions(
+          headerFactura.terminoPago, 
+          new Date(new Date(headerFactura.fechaEmision).getTime() + dia), // sumamos 1 día
+          totalFactura
+        );
         const tablaTerminosPagoHTML = generarTablaTerminosPago(fechasPago, pagos);
 
 
@@ -286,6 +291,8 @@ async function generarBarCode(facturaSap) {
 
   const dia = 24 * 60 * 60 * 1000;
 
+  console.log('dia', dia);
+
   switch (terminoPagoHeader) {
     case 'Z000':
       fechasPago = [fechaEmision];
@@ -362,12 +369,10 @@ function generarTablaTerminosPago(fechasPago, pagos) {
 } 
 
 function formatoFecha(fecha) {
- ///yyyy-mm-dd
- const d = new Date(fecha);
- const year = d.getFullYear();
- const month = String(d.getMonth() + 1).padStart(2, '0');
- const day = String(d.getDate()).padStart(2, '0');
 
- return `${year}-${month}-${day}`;
+  const year = fecha.getFullYear();
+  const month = String(fecha.getMonth() + 1).padStart(2, '0');
+  const day = String(fecha.getDate()).padStart(2, '0');
 
+  return `${year}-${month}-${day}`;
 }

@@ -93,7 +93,7 @@
             </b-col>
             <b-col md="6">
               <b-form-group label="Término de Pago" label-class="text-white">
-                <b-form-input placeholder="Ingrese el Término de Pago" id="terminoPago"  v-model="headerFacturaModel.terminoPago"/>
+                <b-form-select id="terminoPago" v-model="headerFacturaModel.terminoPago" :options="condicionesPago" />
               </b-form-group>
             </b-col>
           </b-row>
@@ -273,7 +273,7 @@ const headerFacturaModel = ref({
   poCliente: '',
   ordenVenta: '',
   terminoVenta: 0,
-  terminoPago: '',
+  terminoPago: 'Z000',
   facturaSap: '',
   pesoNeto: 0,
   pesoBruto: 0
@@ -669,6 +669,20 @@ function getMinMaxCaiActivo() {
     })
 }
 
+const condicionesPago=  [
+  { value: 'Z000', text: 'Z000' },//Pago en una sola exhibición
+    { value: 'Z060', text: 'Z060' },//Dentro de los 60 días sin DPP
+    { value: 'Z075', text: 'Z075' },//Dentro de los 75 días sin DPP
+    { value: 'Z090', text: 'Z090' },//Dentro de los 90 días sin DPP
+    { value: 'ZP20', text: 'ZP20' },//Pagable en 2 importes parciales
+    { value: 'ZP30', text: 'ZP30' },//Pagable en 3 importes parciales
+    { value: 'ZP40', text: 'ZP40' },//Pagable en 4 importes parciales
+    { value: 'ZP50', text: 'ZP50' } //Pagable en 5 importes parciales
+]
+
+    
+
+
 
 
 onMounted(async () => {
@@ -681,6 +695,7 @@ onMounted(async () => {
   } catch (err) {
     console.error('Error en onMounted:', err)
   }
+
 })
 </script>
 

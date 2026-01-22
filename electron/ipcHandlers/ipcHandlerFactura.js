@@ -83,6 +83,9 @@ ipcMain.handle('factura:generarFactura', async (event, data) => {
             <img src="${logoToBase64(path.join(__dirname, '..', 'logos', 'ge.png'))}" alt="Logo GE" style="width: 40px !important;">
             `;
 
+        const { fechasPago, pagos } = handleTerminoPagoOptions(headerFactura.terminoPago, new Date(headerFactura.fechaEmision), totalFactura);
+        const tablaTerminosPagoHTML = generarTablaTerminosPago(fechasPago, pagos);
+
 
         const html = template
             .replace(/{{empresa.razonSocial}}/g, empresa.razonSocial)
@@ -129,6 +132,7 @@ ipcMain.handle('factura:generarFactura', async (event, data) => {
             .replace(/{{headerFactura.pesoNeto}}/g, pesoNeto)
             .replace(/{{headerFactura.pesoBruto}}/g, pesoBruto)
             .replace(/{{codigoBarraSVG}}/g, codigoBarraSVG)
+            .replace(/{{tablaTerminosPagoHTML}}/g, tablaTerminosPagoHTML)
             ;
 
         const browserWindow = new BrowserWindow({
@@ -274,4 +278,96 @@ async function generarBarCode(facturaSap) {
     console.error('Error al generar código de barras:', err);
     return '';
   }
+}
+
+ function handleTerminoPagoOptions(terminoPagoHeader, fechaEmision, totalFactura) {
+  let fechasPago = [];
+  let pagos = [];
+
+  const dia = 24 * 60 * 60 * 1000;
+
+  switch (terminoPagoHeader) {
+    case 'Z000':
+      fechasPago = [fechaEmision];
+      pagos = [totalFactura];
+      break;
+
+    case 'Z060':
+      fechasPago = [new Date(fechaEmision.getTime() + 60 * dia)];
+      pagos = [totalFactura];
+      break;
+
+    case 'Z075':
+      fechasPago = [new Date(fechaEmision.getTime() + 75 * dia)];
+      pagos = [totalFactura];
+      break;
+
+    case 'Z090':
+      fechasPago = [new Date(fechaEmision.getTime() + 90 * dia)];
+      pagos = [totalFactura];
+      break;
+
+    case 'ZP20':
+      fechasPago = [
+        new Date(fechaEmision.getTime() + 30 * dia),
+        new Date(fechaEmision.getTime() + 60 * dia)
+      ];
+      pagos = [totalFactura * 0.5, totalFactura * 0.5];
+      break;
+
+    case 'ZP30':
+      fechasPago = [
+        new Date(fechaEmision.getTime() + 30 * dia),
+        new Date(fechaEmision.getTime() + 60 * dia),
+        new Date(fechaEmision.getTime() + 90 * dia)
+      ];
+      pagos = [0.33, 0.33, 0.34].map(p => totalFactura * p);
+      break;
+    case 'ZP40':
+      fechasPago = [
+        new Date(fechaEmision.getTime() + 30 * dia),
+        new Date(fechaEmision.getTime() + 60 * dia),
+        new Date(fechaEmision.getTime() + 90 * dia),
+        new Date(fechaEmision.getTime() + 120 * dia)
+      ];
+      pagos = [0.25, 0.25, 0.25, 0.25].map(p => totalFactura * p);
+      break;
+    case 'ZP50':
+      fechasPago = [
+        new Date(fechaEmision.getTime() + 30 * dia),
+        new Date(fechaEmision.getTime() + 60 * dia),
+        new Date(fechaEmision.getTime() + 90 * dia),
+        new Date(fechaEmision.getTime() + 120 * dia),
+        new Date(fechaEmision.getTime() + 150 * dia)
+      ];
+      pagos = [0.2, 0.2, 0.2, 0.2, 0.2].map(p => totalFactura * p);
+      break;
+
+    default:
+      fechasPago = [fechaEmision];
+      pagos = [totalFactura];
+  }
+
+  return { fechasPago, pagos };
+}
+
+function generarTablaTerminosPago(fechasPago, pagos) {
+  return fechasPago.map((fecha, index) => `
+    <tr>
+      <td>${index + 1}</td>
+      <td>${formatoFecha(fecha)}</td>
+      <td>${separadorMilesDecimales(pagos[index])}</td>
+    </tr>
+  `).join('');
+} 
+
+function formatoFecha(fecha) {
+ ///yyyy-mm-dd
+ const d = new Date(fecha);
+ const year = d.getFullYear();
+ const month = String(d.getMonth() + 1).padStart(2, '0');
+ const day = String(d.getDate()).padStart(2, '0');
+
+ return `${year}-${month}-${day}`;
+
 }
